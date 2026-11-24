@@ -1,0 +1,36 @@
+{
+  "marque": "Pacini Granby",
+  "version": 1,
+  "mise_a_jour": "2026-11-24",
+  "legende_statuts": {
+    "valide": "confirmé explicitement par l'utilisateur comme préférence de la marque",
+    "essai": "valeur utilisée pour l'essai « Décors de Noël », PAS une règle permanente",
+    "a-valider": "vient du guide de marque ou d'une observation, pas encore confirmé comme règle de montage",
+    "a-completer": "information inconnue : ne rien inventer"
+  },
+  "parametres": {
+    "langue": { "valeur": "français québécois", "statut": "valide", "utilise_par_le_script": false },
+    "public": { "valeur": "familles de classe moyenne et élevée", "statut": "valide", "utilise_par_le_script": false },
+    "ton": { "valeur": "gourmand, naturel et énergique", "statut": "valide", "utilise_par_le_script": false },
+    "rythme": { "valeur": "montage dynamique qui garde les spectateurs intéressés", "statut": "valide", "utilise_par_le_script": false },
+    "musique_style": { "valeur": "ambiance un peu décontractée", "statut": "valide", "utilise_par_le_script": false },
+    "police_texte": { "valeur": "Montserrat Regular", "statut": "valide", "utilise_par_le_script": false },
+    "police_texte_fichier": { "valeur": "C:\\Users\\Hicham\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Montserrat-Regular.ttf", "statut": "valide", "utilise_par_le_script": true },
+    "couleur_principale": { "valeur": "B9242B", "statut": "valide", "utilise_par_le_script": false },
+    "couleur_noir": { "valeur": "000000", "statut": "a-valider", "note": "le guide écrit 00000 (5 chiffres) : à confirmer", "utilise_par_le_script": false },
+    "logo": { "valeur": null, "statut": "a-completer", "note": "aucun fichier de logo fourni", "utilise_par_le_script": false },
+
+    "largeur": { "valeur": 1080, "statut": "essai", "note": "format vertical 9:16 proposé pour l'essai", "utilise_par_le_script": true },
+    "hauteur": { "valeur": 1920, "statut": "essai", "utilise_par_le_script": true },
+    "duree_cible": { "valeur": "15-25", "statut": "essai", "note": "secondes ; avertissement seulement", "utilise_par_le_script": true },
+    "duree_plan_proposition": { "valeur": 2.0, "statut": "essai", "note": "secondes ; utilisé seulement pour la proposition automatique de plan", "utilise_par_le_script": true },
+    "texte_taille": { "valeur": 52, "statut": "essai", "utilise_par_le_script": true },
+    "texte_couleur": { "valeur": "FFFFFF", "statut": "essai", "utilise_par_le_script": true },
+    "texte_marge_basse": { "valeur": 458, "statut": "essai", "note": "pixels ; hypothèse de zone de sécurité à vérifier sur téléphone", "utilise_par_le_script": true },
+    "texte_marge_laterale": { "valeur": 130, "statut": "essai", "note": "pixels ; hypothèse de zone de sécurité à vérifier sur téléphone", "utilise_par_le_script": true },
+    "texte_ombre_opacite": { "valeur": 0.7, "statut": "essai", "utilise_par_le_script": true },
+    "texte_ombre_flou": { "valeur": 6, "statut": "essai", "utilise_par_le_script": true },
+    "texte_ombre_decalage": { "valeur": 3, "statut": "essai", "note": "pixels vers le bas", "utilise_par_le_script": true },
+    "texte_interligne": { "valeur": 1.27, "statut": "essai", "note": "multiple de la taille du texte", "utilise_par_le_script": true }
+  }
+}

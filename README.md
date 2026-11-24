@@ -5,7 +5,7 @@ Système de travail pour le montage vidéo des marques clientes : directives par
 - Utilisateurs : le responsable du montage (À compléter) et Guan (rôle : À compléter)
 - Poste : Windows · Logiciel de montage : CapCut Pro
 
-> État actuel : **structure et modèles seulement**. Il n'y a pas encore de scripts ni d'agents actifs, et les fichiers marqués « À compléter » attendent tes informations.
+> État actuel : structure, modèles, premières directives de Pacini Granby, un premier essai (« Décors de Noël ») et un script de prémontage (`scripts/premontage.ps1`, procédure dans `sops/procedure-premontage.md`). Il n'y a pas encore d'agents actifs. Les fichiers et champs marqués « À compléter » attendent tes informations.
 
 ## Contenu du dépôt
 
@@ -16,7 +16,7 @@ Système de travail pour le montage vidéo des marques clientes : directives par
 | `sops/` | Procédures : montage, contrôle qualité, emplacements des fichiers lourds |
 | `clients/` | Un dossier par marque, avec 4 fichiers : `marque.md`, `montage.md`, `references.md`, `retours-client.md` |
 | `templates/brief-video.md` | Formulaire à remplir pour chaque nouvelle vidéo |
-| `scripts/` | Futurs programmes d'automatisation (vide pour l'instant) |
+| `scripts/` | Script de prémontage `premontage.ps1` et son mode d'emploi (`scripts/README.md`) |
 | `.claude/agents/` | Futurs agents spécialisés (vide pour l'instant) |
 | `.gitignore` | Exclut du dépôt les rushes, exports et clés d'accès |
 

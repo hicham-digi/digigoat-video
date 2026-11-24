@@ -19,6 +19,17 @@ Ce fichier est lu par Claude Code au début de chaque session. Il décrit commen
    - `retours-client.md` : corrections validées et règles à appliquer.
 3. Les procédures du dossier `sops/` (montage, contrôle qualité, emplacements des fichiers).
 
+## Flux par défaut pour une nouvelle vidéo
+
+L'utilisateur fournit seulement **le dossier des rushes, le sujet, la référence et ses consignes**. Suis `sops/workflow-nouvelle-video.md` :
+
+- livrable = **projet CapCut modifiable** (`scripts/capcut_projet.py`), pas un MP4 fusionné ;
+- **modèle autonome** `templates/capcut/modele_technique_v1/modele.json` ;
+- plans **liés aux rushes sources** (`--rushes`) avec points d'entrée et de sortie, donc rallongeables ;
+- **orientation analysée par toi fichier par fichier** sur l'image de test de chaque rush, jamais présumée ; ne demande à l'utilisateur que pour les fichiers **restés ambigus**, **dans un seul message groupé**, sans validation manuelle systématique ;
+- **plan CSV préparé par toi** à partir des médias réellement analysés, avec une note par ligne ;
+- avant toute modification du dossier des projets CapCut : CapCut fermé, sauvegarde complète vérifiée (`--sauvegarde`), chemin confirmé à l'utilisateur ; ne jamais toucher un projet existant, ni piloter CapCut pendant que l'utilisateur y travaille.
+
 ## Règles à respecter
 
 1. **N'invente aucune directive.** Si une information est marquée « À compléter » (ou absente), ne la devine pas : signale-le et demande-la à l'utilisateur.
@@ -33,10 +44,12 @@ Ce fichier est lu par Claude Code au début de chaque session. Il décrit commen
 
 ## État actuel du projet
 
-Seuls la structure, la documentation et les modèles existent. Il n'y a pas encore :
+- La structure, la documentation et les modèles existent.
+- Un script de prémontage existe, à la demande de l'utilisateur : `scripts/premontage.ps1` (mode d'emploi : `scripts/README.md`). Il utilise seulement PowerShell et ffmpeg, déjà installés.
+- La procédure est dans `sops/procedure-premontage.md`. Elle sépare trois catégories : les étapes techniques réutilisables, les préférences de marque **confirmées par l'utilisateur**, et les choix **propres à un essai**.
+- Il n'y a pas encore d'agents spécialisés actifs (`.claude/agents/` est vide).
 
-- de scripts d'automatisation (`scripts/` est vide) ;
-- d'agents spécialisés actifs (`.claude/agents/` est vide).
+Les choix d'un essai (durée, sélection et ordre des plans, passage musical, fondus, rotation propre à des fichiers) ne deviennent jamais des règles permanentes sans confirmation explicite de l'utilisateur.
 
 ## Carte du dépôt
 
@@ -47,6 +60,6 @@ Seuls la structure, la documentation et les modèles existent. Il n'y a pas enco
 | `sops/` | Procédures de montage et de contrôle qualité |
 | `clients/` | Directives propres à chaque marque (5 dossiers) |
 | `templates/brief-video.md` | Formulaire à remplir pour chaque nouvelle vidéo |
-| `scripts/` | Futurs programmes d'automatisation |
+| `scripts/` | Script de prémontage `premontage.ps1` et son mode d'emploi |
 | `.claude/agents/` | Futures instructions d'agents spécialisés |
 | `.gitignore` | Fichiers exclus du dépôt (rushes, exports, clés) |

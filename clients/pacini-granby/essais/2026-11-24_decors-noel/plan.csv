@@ -1,0 +1,11 @@
+ordre;rush;debut;duree;nom;note
+01;DGM_3793;0.5;1.5;cadeaux;Ouverture sur le mouvement
+02;DGM_3787;0.2;1.8;lutin-lampe;Mouvement vers le bas
+03;DGM_3790;1.0;2.2;pere-noel-violon;Plan fixe - piece maitresse du decor
+04;DGM_3791;0.2;2.0;village-neige;Leger flou en fin de segment
+05;DGM_3784;0.4;2.2;etagere-lutins;Travelling lateral
+06;DGM_3792;0.2;2.0;orignal;Village visible par la fenetre
+07;DGM_3788;1.0;1.8;couronne-noel;Mise au point douce - conserve par decision de l'utilisateur
+08;DGM_3789;1.0;1.8;casse-noisettes;Emballages de produits avec marque visibles
+09;DGM_3794;0.2;1.8;lutin-bouteille;Flou d'avant-plan - conserve par decision de l'utilisateur
+10;DGM_3795;2.4;2.5;bas-cheminee;Plan de fin

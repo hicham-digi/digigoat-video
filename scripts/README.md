@@ -1,17 +1,213 @@
 # scripts/
 
-Ce dossier accueillera plus tard les programmes d'automatisation du traitement vidéo.
+## premontage.ps1
 
-**État actuel : vide volontairement.** Aucun script n'est développé et aucun outil n'est installé à cette étape.
+Prépare un prémontage vertical à partir de rushes : vérifications, orientation, conversion, segments séparés, assemblage, musique et texte facultatifs, contrôles techniques et rapport.
 
-Avant d'ajouter un script, il faut :
+- **Outils** : Windows PowerShell 5.1 et ffmpeg/ffprobe, déjà installés sur ce poste. Rien n'est installé ni téléchargé.
+- **Originaux** : jamais modifiés. Le script refuse une sortie placée dans le dossier des rushes.
+- **Sorties** : un **nouveau dossier horodaté** à chaque exécution. Rien n'est écrasé.
+- **Procédure complète** (trois catégories de choix) : `sops/procedure-premontage.md`.
 
-1. décrire la tâche à automatiser (dans `sops/`) ;
-2. obtenir l'accord de l'utilisateur ;
-3. documenter dans ce fichier : à quoi sert le script, comment le lancer sous Windows, et quels outils il demande.
+### Ce qu'il faut fournir
 
-## Liste des scripts
+| Paramètre | Obligatoire | Rôle |
+| --- | --- | --- |
+| `-Rushes` | Oui | Dossier des rushes (`.mov`, `.mp4`, `.m4v`, `.mkv`, `.avi`, `.mts`, `.mxf`) |
+| `-Brief` | Oui | Fichier du brief (`.md`). Seuls le titre et le nombre de « À compléter » sont lus. Une copie est gardée |
+| `-Client` | Oui | Dossier du client, par exemple `clients\pacini-granby`. Le script y lit `parametres-script.json` |
+| `-Sortie` | Oui | Dossier parent des sorties. Le script y crée un sous-dossier pour cet essai |
+| `-Plan` | Non (recommandé) | Fichier CSV des plans choisis (voir plus bas). **Sans plan, le script s'arrête après avoir proposé un plan** |
+| `-Orientation` | Selon les rushes | `anti-horaire`, `horaire`, `recadrer-centre`, `aucune`. Par défaut `demander` : arrêt avec image de test si les rushes sont en paysage sans indicateur de rotation |
+| `-OrientationParRush` | Non | Décision rush par rush, prioritaire sur `-Orientation` : `"DGM_3828=anti-horaire;DGM_3832=horaire"`. À utiliser quand des rushes d'une même session n'ont pas tous la même orientation. Sans décision, le script s'arrête et crée **une image de test par rush** concerné |
+| `-Musique` | Non | Piste `.mp3` ou autre. Le départ et les fondus sont proposés par analyse du signal |
+| `-Texte` | Non | Texte à afficher pendant toute la vidéo. Un `|` force un saut de ligne ; sinon le script coupe en deux lignes si c'est trop large |
+| `-PoliceTexte` | Non | Fichier de police (`.ttf`) à utiliser à la place de celle du client. Refusé s'il n'existe pas |
+| `-TexteTaille` | Non | Taille du texte en pixels (sur la hauteur de sortie), à la place de la valeur du client |
+| `-TexteCentreY` | Non | Position verticale : centre du bloc de texte, en fraction de la hauteur (`0.5` = milieu). Remplace la marge basse. Le script mesure le texte réellement dessiné et le recentre, quelle que soit la police |
+| `-TexteInterligne` | Non | Interligne, en multiple de la taille (défaut 1,27) |
+| `-TexteOmbreFlou`, `-TexteOmbreDecalage` | Non | Flou et décalage vertical de l'ombre, en pixels (défauts 6 et 3). À réduire avec la taille du texte |
+| `-DepartMusique`, `-FonduEntree`, `-FonduSortie`, `-GainMusiqueDb` | Non | Pour imposer un réglage musical (secondes, dB). Avec `-DepartMusique`, le script **garde ce départ** mais analyse la fenêtre et la fin de la musique à partir de lui : il signale un quasi-silence dans la fenêtre et ajuste les fondus (d'entrée et de sortie) à la durée de la vidéo. Utile quand la vidéo change de durée mais que le départ musical est validé |
+| `-SonOrigine` | Non | `couper` (par défaut, version muette) ou `garder` |
+| `-DureeCible` | Non | Par exemple `"15-25"` : avertissement seulement |
+| `-DureePlan` | Non | Durée (s) de chaque extrait dans la proposition automatique |
+| `-Transcription` | Non | Fichier SRT **que vous avez déjà**. Le script ne transcrit pas |
+| `-Auto` | Non | Produit à partir de la proposition technique, sans plan validé. Sortie marquée « NON VALIDÉE » |
 
-| Script | Rôle | Comment le lancer | Statut |
-| --- | --- | --- | --- |
-| (aucun pour le moment) | | | |
+Les valeurs propres à une marque (police, taille et marges du texte, format, etc.) viennent de `parametres-script.json` du dossier client. Chaque valeur y porte un **statut** : `valide`, `essai`, `a-valider` ou `a-completer`. Le rapport indique, pour chaque paramètre utilisé, d'où il vient et son statut.
+
+### Format du plan (CSV, séparateur `;`)
+
+```
+ordre;rush;debut;duree;nom;note
+01;DGM_3793;0.5;1.5;cadeaux;Ouverture sur le mouvement
+02;DGM_3787;0.2;1.8;lutin-lampe;
+```
+
+`rush` : nom du fichier avec ou sans extension. `debut` et `duree` en secondes, décimales avec un point. Exemple réel : `clients\pacini-granby\essais\2026-11-24_decors-noel\plan.csv`.
+
+### Ce que le script automatise, et ce qui reste humain
+
+| | Script | Décision humaine |
+| --- | --- | --- |
+| Vérification des fichiers, conversion, découpe, assemblage, export, contrôles | Oui | Non |
+| Orientation | Applique une rotation lue dans le fichier | **Choisir le sens si le fichier n'en porte pas** |
+| Sélection des plans | Propose les extraits les plus nets | **Choisir réellement les plans** (contenu, promotions, personnes, marques) |
+| Ordre et rythme | Applique le plan fourni | **Ordre, durée de chaque plan, rythme** |
+| Musique | Propose un départ net et des fondus | **Écouter, licence, goût** |
+| Texte | Rend et mesure | **Contenu, lisibilité, test sur téléphone** |
+| SRT de parole | Non (copie un SRT fourni) | **Transcription fiable** |
+
+### Ce que contient un dossier de sortie
+
+```
+AAAA-MM-JJ_HHMMSS_<titre>\
+  segments\                un fichier par plan (1080x1920, son d'origine conservé)
+  premontage\              premontage_<muet|musique|audio-origine>[_avec-texte|_sans-texte].mp4
+  texte\                   (si -Texte) texte.txt, texte.srt, texte_overlay.png, texte_parametres.md
+  sous-titres\             (seulement si -Transcription valide) transcription.srt
+  controle\
+    rapport.md             contrôles, paramètres et statuts, ce qui reste à vérifier
+    commandes.log          commandes ffmpeg exactes
+    planche-rushes-*.png   5 images par rush, orientation appliquée
+    planche-premontage.png une image toutes les 0,5 s
+    plan-propose.csv       (sans plan) la proposition technique
+    plan-utilise.csv, plan-fourni.csv, brief-utilise.md, parametres-client-utilises.json
+```
+
+### Codes de sortie
+
+| Code | Signification |
+| --- | --- |
+| 0 | Terminé, ou arrêt volontaire pour un plan à valider (aucun prémontage produit) |
+| 1 | Erreur (message affiché, détail dans le rapport si le dossier existe) |
+| 3 | Arrêt volontaire : orientation à décider |
+
+### Mode d'emploi simple
+
+Toutes les commandes se lancent depuis le dossier du dépôt. Pour l'ouvrir dans PowerShell :
+
+```powershell
+cd C:\Users\Hicham\Documents\GitHub\digigoat-video
+```
+
+**1. Premier passage, sans rien décider.** Le script vérifie les fichiers. Si l'orientation est inconnue, il s'arrête et crée une image de test dans `controle\`. Regardez-la : de gauche à droite, image d'origine, rotation horaire, rotation anti-horaire. Choisissez celle où le décor est à l'endroit.
+
+**2. Relancer avec l'orientation, sans plan.** Le script crée les planches de contrôle et `controle\plan-propose.csv`, puis s'arrête.
+
+**3. Corriger le plan.** Copiez `plan-propose.csv`, retirez les rushes à écarter, réordonnez, ajustez `debut` et `duree`, puis enregistrez-le (par exemple dans le dossier de l'essai).
+
+**4. Produire.** Relancez avec `-Plan`, et si voulu `-Musique` et `-Texte`.
+
+**5. Lire `controle\rapport.md`**, regarder les planches et la vidéo, puis finir dans CapCut.
+
+Un exemple générique (à adapter) :
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\premontage.ps1 -Rushes "D:\rushes" -Brief clients\x\essais\e\brief.md -Client clients\x -Sortie "D:\sorties" -Plan clients\x\essais\e\plan.csv -Orientation anti-horaire
+```
+
+## capcut_projet.py
+
+Crée un **projet CapCut modifiable** (un clip par plan, texte modifiable, musique sur sa propre piste) à partir d'un plan et de segments déjà préparés. Python 3 (déjà installé) et ffprobe. Aucun MP4 fusionné.
+
+- Il ajoute un **nouveau** dossier de projet et une entrée dans l'index `root_meta_info.json`, après en avoir fait une sauvegarde (`root_meta_info.json.bak_before_<nom>`). Il ne modifie aucun projet existant et n'écrase jamais un projet du même nom.
+- **CapCut doit être fermé** (il refuse sinon).
+- Il utilise un **modèle technique autonome**, sans média ni texte d'un ancien montage : `templates/capcut/modele_technique_v1/modele.json` (documenté dans `templates/capcut/modele_technique_v1/LISEZ-MOI.md`). Plus aucune dépendance à un de tes projets CapCut. Il lit seulement les identifiants d'appareil dans un de tes projets récents, sans les stocker.
+- `--essai-local <dossier>` écrit le projet dans un dossier au lieu de CapCut (aucun index modifié). `--limiter N` ne garde que les N premiers plans (projet de test).
+
+**Deux façons de relier les plans** (exactement une des deux) :
+
+| Option | Durée des plans dans CapCut | Quand l'utiliser |
+| --- | --- | --- |
+| `--segments <dossier>` | **Fixe** : chaque clip a exactement la durée exportée. On peut le **raccourcir**, pas le rallonger | Reproduire une version déjà exportée (c'est le cas de la V5) |
+| `--rushes <dossier> --orientation <sens>` | **Rallongeable** : chaque clip pointe vers le rush avec son point d'entrée et sa durée (colonnes `debut` et `duree` du plan). On peut le rallonger, le raccourcir ou le décaler tant qu'il reste du rush de chaque côté | **Les prochaines productions** |
+
+Avec `--rushes`, le script applique la rotation et l'échelle que CapCut utilise lui-même pour ces rushes (−90° et 1,7778 pour des rushes 4K filmés à la verticale sans indicateur : valeurs identiques à celles de ton projet « Pates flambees »).
+
+**L'orientation se décide fichier par fichier** : pour un rush paysage sans rotation intégrée, le script refuse de deviner. Le flux :
+
+```powershell
+# 1. une image de test par rush (origine | horaire | anti-horaire), puis arrêt
+python -I scripts\capcut_projet.py --nom "NOM" --plan <plan.csv> --rushes "<dossier>" --tests-orientation "<dossier des images>"
+# 2. après analyse de chaque image par Claude (l'utilisateur ne tranche que les rushes restés ambigus) : une décision par rush
+python -I scripts\capcut_projet.py --nom "NOM" --plan <plan.csv> --rushes "<dossier>" --orientation-par-rush "DGM_0001=anti-horaire;DGM_0002=horaire" --musique "<piste>" --depart <s> --fondu-entree 0.02 --fondu-sortie 2.0 --texte "ligne 1|ligne 2" --sauvegarde "<dossier des sauvegardes>"
+```
+
+`--orientation` (sens par défaut pour tous) existe, mais n'est à utiliser que si tous les rushes du plan ont été vérifiés un à un. `--sauvegarde <dossier>` copie **tous** les projets CapCut existants (sans la corbeille) et contrôle le nombre de fichiers avant d'écrire quoi que ce soit. Test : 3 rushes dont deux sens opposés (rotations +90° et −90° appliquées), refus sans décision, images de test, sauvegarde sur un dossier factice.
+
+Le flux complet par défaut (qui prépare le plan, quoi vérifier) : `sops/workflow-nouvelle-video.md`.
+- Mode d'emploi, ce qui est modifiable et la restauration : `clients/pacini-granby/essais/2026-11-24_decors-noel/projet-capcut_V5.md`.
+
+Projet de la V5 (la commande qui l'a créé) :
+
+```powershell
+python -I scripts\capcut_projet.py --nom "Pacini Granby - Decors Noel V5" --plan clients\pacini-granby\essais\2026-11-24_decors-noel\plan_V5.csv --segments "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\ESSAIS\2026-11-24_decors-noel\segments_V5" --musique "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\ESSAIS\2026-11-24_decors-noel\musique\snapgram.io_qk5jbiotjaut.mp3" --depart 6.7 --fondu-entree 0.02 --fondu-sortie 2.0 --texte "Une ambiance chaleureuse|pour le temps des Fêtes"
+```
+
+Valeurs par défaut du texte : Californian FB, taille CapCut 4,16 (= 26,7 px à 1080×1920), au centre. Le même nom de projet ne peut pas être recréé : choisis un autre `--nom`.
+
+Vérifié dans CapCut 9.8.0.4213 : ouverture, 12 plans, texte, musique et fondus modifiables, suppression d'un plan avec fermeture de l'espace, sauvegarde, réouverture. Mode `--rushes` : ouverture, image à l'endroit et plein cadre (rotation −90°, échelle 178 %), **rallongement d'un plan** en tirant son bord droit (1 s 15 → 1 s 23). Non vérifié : une version de CapCut différente, des rushes déjà verticaux ou avec rotation intégrée en mode `--rushes`.
+
+### Relancer exactement l'essai « Décors de Noël »
+
+```powershell
+cd C:\Users\Hicham\Documents\GitHub\digigoat-video
+```
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\premontage.ps1 -Rushes "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\RUSHES" -Brief clients\pacini-granby\essais\2026-11-24_decors-noel\brief.md -Client clients\pacini-granby -Sortie "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\ESSAIS\sorties-script" -Plan clients\pacini-granby\essais\2026-11-24_decors-noel\plan.csv -Orientation anti-horaire -Musique "C:\Users\Hicham\Desktop\RÉFÉRENCE\Musique référence\snapgram.io_qk5jbiotjaut.mp3" -Texte "Une ambiance chaleureuse pour le temps des Fêtes"
+```
+
+Durée : environ 2 minutes. Le résultat se retrouve dans un nouveau sous-dossier de `...\ESSAIS\sorties-script\`. C'est la **V3** (texte Montserrat 52 px, en bas).
+
+### Relancer exactement la V4 (texte ajusté sur la référence de Noël)
+
+Même commande, avec le texte sur deux lignes (`|`) et les réglages du texte :
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\premontage.ps1 -Rushes "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\RUSHES" -Brief clients\pacini-granby\essais\2026-11-24_decors-noel\brief.md -Client clients\pacini-granby -Sortie "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\ESSAIS\sorties-script" -Plan clients\pacini-granby\essais\2026-11-24_decors-noel\plan.csv -Orientation anti-horaire -Musique "C:\Users\Hicham\Desktop\RÉFÉRENCE\Musique référence\snapgram.io_qk5jbiotjaut.mp3" -Texte "Une ambiance chaleureuse|pour le temps des Fêtes" -PoliceTexte "C:\Windows\Fonts\CALIFR.TTF" -TexteTaille 26.7 -TexteInterligne 1.07 -TexteCentreY 0.4996 -TexteOmbreFlou 3 -TexteOmbreDecalage 2
+```
+
+Ces valeurs viennent de la mesure de **cette** référence : elles ne valent pas pour une autre vidéo.
+
+### Relancer exactement la V5 (deux rushes ajoutés)
+
+Même commande que la V4, avec le plan à 12 plans, l'orientation décidée pour les deux nouveaux rushes, et le départ musical de la V4 conservé :
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\premontage.ps1 -Rushes "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\RUSHES" -Brief clients\pacini-granby\essais\2026-11-24_decors-noel\brief.md -Client clients\pacini-granby -Sortie "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\ESSAIS\sorties-script" -Plan clients\pacini-granby\essais\2026-11-24_decors-noel\plan_V5.csv -Orientation anti-horaire -OrientationParRush "DGM_3828=anti-horaire;DGM_3832=anti-horaire" -Musique "C:\Users\Hicham\Desktop\RÉFÉRENCE\Musique référence\snapgram.io_qk5jbiotjaut.mp3" -DepartMusique 6.7 -Texte "Une ambiance chaleureuse|pour le temps des Fêtes" -PoliceTexte "C:\Windows\Fonts\CALIFR.TTF" -TexteTaille 26.7 -TexteInterligne 1.07 -TexteCentreY 0.4996 -TexteOmbreFlou 3 -TexteOmbreDecalage 2
+```
+
+Durée : environ 2 minutes et demie. Les deux nouveaux plans (`DGM_3828`, `DGM_3832`) et leurs passages sont dans `plan_V5.csv`. Ces choix sont ceux de cet essai.
+
+### Dépannage
+
+| Message ou problème | Cause probable | Solution |
+| --- | --- | --- |
+| « l'exécution de scripts est désactivée » | Politique d'exécution de PowerShell | Utiliser la commande ci-dessus (`-ExecutionPolicy Bypass` ne vaut que pour cette exécution) |
+| Accents illisibles dans la console | Page de codes de la console | Sans effet sur les fichiers produits, ils restent en UTF-8 |
+| « Entrée introuvable » | Chemin erroné | Vérifier le chemin. Un nom avec accents peut ne pas correspondre à la saisie : le copier depuis l'Explorateur |
+| Code 3, « Orientation à décider » | Rushes en paysage sans indicateur de rotation | Regarder `controle\orientation_*.png`, puis relancer avec `-Orientation` |
+| Code 0 mais aucun prémontage | Pas de `-Plan` | Normal : le script attend un plan validé. Voir l'étape 3 |
+| « ffmpeg et ffprobe sont introuvables » | Hors du PATH | Le script n'installe rien. Vérifier l'installation |
+
+### Tests effectués (2026-11-24)
+
+| Test | Résultat |
+| --- | --- |
+| Essai complet (plan, orientation, musique, texte) | Terminé en environ 2 min. Les deux vidéos sont **identiques** à la V3 faite à la main (SSIM 1,000000, mêmes niveaux sonores) |
+| Sans orientation | Arrêt volontaire, code 3, image de test créée |
+| Sans plan | Proposition technique écrite, arrêt volontaire, code 0 |
+| `-Auto -SonOrigine garder`, sans musique ni texte | Prémontage `audio-origine` produit, rapport « SORTIE NON VALIDÉE » |
+| Dossier de rushes inexistant | Erreur claire, code 1 |
+| Sortie dans le dossier des rushes | Refusée avant toute création de dossier, code 1 (un défaut de l'ordre des opérations a été trouvé puis corrigé pendant ce test) |
+| Rushes d'origine | Nom, taille et date inchangés après chaque exécution |
+| Nouvelles options de texte (V4) | Calibrées en faisant rendre la phrase de la référence : largeur 172 contre 169 px, hauteur 37,3 contre 37 px, centre vertical 50,0 % contre 49,9 % (à 720×1280). La V4 sans texte est identique à la V3 sans texte (SSIM 1,000000) |
+| Non-régression après ajout des options | Sans les nouvelles options, le script reproduit toujours la V3 (SSIM 1,000000, avec et sans texte) |
+| Défaut corrigé | Le fichier `texte_parametres.md` généré contenait une tabulation parasite devant « texte.srt » : corrigé |
+| V5 : 14 rushes, 2 orientations décidées rush par rush, départ musical imposé | Terminé en 142 s. Les 10 plans d'origine sont identiques à la V4 (SSIM 1,000000 par segment), l'audio de 0 à 15 s a la même empreinte, l'image du texte aussi |
+| Non-régression après ajout de `-OrientationParRush` et de l'analyse à départ imposé | La commande de la V4 relancée avec `-DepartMusique 6.7` redonne la V4 : vidéo identique (SSIM 1,000000, avec et sans texte) et audio identique (même empreinte MD5) |
+| Arrêt sur l'orientation avec 14 rushes | Une image de test par rush (14 sur 14), code 3. Un défaut a été corrigé : le nom du rush était vide dans le message |
+
+**Non testés** : une orientation différente entre deux rushes dans la même exécution (seules des décisions identiques ont été exercées), rushes déjà verticaux, rushes avec rotation intégrée au fichier, `-Transcription`, `-DepartMusique` imposé, rushes sans piste audio avec `-SonOrigine garder`, d'autres marques.
