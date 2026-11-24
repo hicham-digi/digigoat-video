@@ -87,7 +87,7 @@ Fiche : `sops/format-reactions-compteur.md`. Trois niveaux à ne pas mélanger :
 - **Choix propres à la vidéo de l'essai 2 (pas des valeurs fixes)** : 20 chiffres, 6 réactions, répétitions 3/4, 15,23 s.
 - **Texte** : pour ce format, la lisibilité de l'export de l'utilisateur est la **référence visuelle** (plus gras, ~+12 à +16 %). Police **non identifiée, non nommée** ; **pas généralisé à la marque** (le guide cite Montserrat Regular).
 - Le décalage du chiffre dans l'export de l'utilisateur était **involontaire** (défaut, pas une préférence).
-- **À faire (non fait à ce jour)** : une **version corrigée** (V3) de la vidéo avec chiffres synchronisés sur les coupes, **nouveau projet CapCut** sans toucher au projet « Pacini Granby - Reactions drinks V2 » de l'utilisateur. Demande l'état du projet avant (`Get-Process CapCut`, heure d'écriture). Le style de texte à utiliser (police, taille) est à préciser avec l'utilisateur, sans inventer le nom de la police de son export.
+- **V3 faite (2026-11-24)** : version corrigée de l'export de l'utilisateur (20 chiffres, 6 réactions, répétitions 3/4/3/3/3/4, chiffres calés sur les coupes), **nouveau** projet CapCut « Pacini Granby - Reactions drinks V3 » + MP4 ; V2 de l'utilisateur non touchée. Détail, temps et contrôles : clients/pacini-granby/essais/2026-11-24_reactions-drinks/plan-de-montage_V3.md. Texte en Montserrat Bold 53 px **par défaut choisi par Claude** (la police de son export n'est pas identifiée) : à valider avec l'utilisateur.
 
 ## 7. Prochaine étape : une deuxième vidéo Pacini Granby
 
