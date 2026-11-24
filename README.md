@@ -9,8 +9,11 @@ Système de travail pour le montage vidéo des marques clientes : directives par
 
 ## Contenu du dépôt
 
+> **Pour reprendre le projet : `REPRISE.md`** (état, tests, décisions ouvertes, prochaine étape).
+
 | Emplacement | À quoi ça sert |
 | --- | --- |
+| `REPRISE.md` | Point de reprise : état du système, montage CapCut en cours, décisions ouvertes, prochaine étape |
 | `CLAUDE.md` | Instructions permanentes lues par Claude Code (comment travailler, quoi lire, quelles règles respecter) |
 | `README.md` | Ce mode d'emploi |
 | `sops/` | Procédures : montage, contrôle qualité, emplacements des fichiers lourds |

@@ -2,6 +2,8 @@
 
 Ce fichier est lu par Claude Code au début de chaque session. Il décrit comment travailler dans ce dépôt.
 
+> **Quand on reprend le projet (nouvelle session, contexte perdu, ou « on reprend »), lis d'abord `REPRISE.md`** : état du système, ce qui est testé, état du montage CapCut de l'utilisateur (à ne pas modifier), décisions ouvertes et prochaine étape. Mets-le à jour en fin de session si l'état change.
+
 ## Contexte
 
 - Dépôt de travail pour le montage vidéo de plusieurs marques clientes.

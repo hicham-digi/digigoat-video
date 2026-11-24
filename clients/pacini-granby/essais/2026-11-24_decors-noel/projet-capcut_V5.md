@@ -1,6 +1,8 @@
 # Projet CapCut modifiable — V5
 
-Projet créé : **« Pacini Granby - Decors Noel V5 »** (24,13 s, 9:16, 30 i/s). Vérifié dans CapCut 9.8.0.4213 le 2026-11-24.
+Projet créé : **« Pacini Granby - Decors Noel V5 »** (24,13 s, 9:16, 30 i/s, 12 plans). Vérifié dans CapCut 9.8.0.4213 le 2026-11-24.
+
+> **État actuel** : l'utilisateur a ensuite modifié lui-même ce projet (11 plans, plan des spaghettis retiré, vin déplacé en 4ᵉ position, 21,1 s). Ce document décrit le projet **tel que généré** ; l'état réel et les règles de prudence sont dans `REPRISE.md`.
 
 ## Ouvrir le projet
 
