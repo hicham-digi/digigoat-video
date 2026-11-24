@@ -27,6 +27,8 @@ Prépare un prémontage vertical à partir de rushes : vérifications, orientati
 | `-TexteCentreY` | Non | Position verticale : centre du bloc de texte, en fraction de la hauteur (`0.5` = milieu). Remplace la marge basse. Le script mesure le texte réellement dessiné et le recentre, quelle que soit la police |
 | `-TexteInterligne` | Non | Interligne, en multiple de la taille (défaut 1,27) |
 | `-TexteOmbreFlou`, `-TexteOmbreDecalage` | Non | Flou et décalage vertical de l'ombre, en pixels (défauts 6 et 3). À réduire avec la taille du texte |
+| `-Compteur` | Non | Un chiffre par plan, affiché pendant ce plan, avec la police, la taille et le style du texte : `"1;2;3;..."`. Exige `-Texte`. Sortie : `texte\compteur_NN.png` et `compteur.txt`. Ajouté pour l'essai « réactions » |
+| `-CompteurCentreY` | Non | Position verticale du compteur, en fraction de la hauteur (défaut `0.585`) |
 | `-DepartMusique`, `-FonduEntree`, `-FonduSortie`, `-GainMusiqueDb` | Non | Pour imposer un réglage musical (secondes, dB). Avec `-DepartMusique`, le script **garde ce départ** mais analyse la fenêtre et la fin de la musique à partir de lui : il signale un quasi-silence dans la fenêtre et ajuste les fondus (d'entrée et de sortie) à la durée de la vidéo. Utile quand la vidéo change de durée mais que le départ musical est validé |
 | `-SonOrigine` | Non | `couper` (par défaut, version muette) ou `garder` |
 | `-DureeCible` | Non | Par exemple `"15-25"` : avertissement seulement |
@@ -144,6 +146,8 @@ Projet de la V5 (la commande qui l'a créé) :
 ```powershell
 python -I scripts\capcut_projet.py --nom "Pacini Granby - Decors Noel V5" --plan clients\pacini-granby\essais\2026-11-24_decors-noel\plan_V5.csv --segments "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\ESSAIS\2026-11-24_decors-noel\segments_V5" --musique "C:\Users\Hicham\Desktop\Digigoat\PACINI GRANBY\ESSAIS\2026-11-24_decors-noel\musique\snapgram.io_qk5jbiotjaut.mp3" --depart 6.7 --fondu-entree 0.02 --fondu-sortie 2.0 --texte "Une ambiance chaleureuse|pour le temps des Fêtes"
 ```
+
+Options du compteur (essai « réactions », 2026-11-24) : `--compteur "1;2;3;..."` (un chiffre par plan, piste de texte séparée, mêmes police et taille que `--texte`) et `--compteur-y` (position CapCut, défaut −0,17 = 58,5 % de la hauteur). Position CapCut y = 1 − 2 × fraction de la hauteur. Police et taille se règlent avec `--police`, `--police-nom`, `--taille-capcut` (pixels / 6,42). Vérifié dans CapCut 9.8.0.4213 : ouverture, piste de chiffres, légende en Montserrat Regular. Rush **déjà vertical sans rotation intégrée** (DJI 1728×3072) : aucune rotation appliquée (rotation 0, échelle 1), plan lié au rush, image à l'endroit.
 
 Valeurs par défaut du texte : Californian FB, taille CapCut 4,16 (= 26,7 px à 1080×1920), au centre. Le même nom de projet ne peut pas être recréé : choisis un autre `--nom`.
 

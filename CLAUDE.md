@@ -29,7 +29,8 @@ L'utilisateur fournit seulement **le dossier des rushes, le sujet, la référenc
 - **modèle autonome** `templates/capcut/modele_technique_v1/modele.json` ;
 - plans **liés aux rushes sources** (`--rushes`) avec points d'entrée et de sortie, donc rallongeables ;
 - **orientation analysée par toi fichier par fichier** sur l'image de test de chaque rush, jamais présumée ; ne demande à l'utilisateur que pour les fichiers **restés ambigus**, **dans un seul message groupé**, sans validation manuelle systématique ;
-- **plan CSV préparé par toi** à partir des médias réellement analysés, avec une note par ligne ;
+- **plan CSV préparé par toi** à partir des médias réellement analysés, avec une note par ligne ; **évalue d'abord la matière** (réactions distinctes, pertinence des répétitions) et adapte nombre et durée s'ils sont indicatifs ;
+- format **« Réactions avec compteur »** : suis `sops/format-reactions-compteur.md` (principes confirmés, chiffre synchronisé avec la coupe par défaut, contrôles de production courts) ;
 - avant toute modification du dossier des projets CapCut : CapCut fermé, sauvegarde complète vérifiée (`--sauvegarde`), chemin confirmé à l'utilisateur ; ne jamais toucher un projet existant, ni piloter CapCut pendant que l'utilisateur y travaille.
 
 ## Règles à respecter

@@ -140,6 +140,8 @@ def main():
     ap.add_argument('--police-nom', default='Californian FB')
     ap.add_argument('--taille-capcut', type=float, default=4.16, help='taille de texte CapCut (1 unité = 6,42 px à 1080x1920)')
     ap.add_argument('--texte-y', type=float, default=0.0, help='position verticale CapCut : 0 = milieu, + = vers le haut')
+    ap.add_argument('--compteur', default='', help='un chiffre par plan, sur une piste de texte séparée : "1;2;3;..." (même police et même taille que --texte)')
+    ap.add_argument('--compteur-y', type=float, default=-0.17, help='position verticale CapCut du compteur (0 = milieu, + = vers le haut ; -0,17 = 58,5 %% de la hauteur)')
     ap.add_argument('--limiter', type=int, default=0, help='ne garder que les N premiers plans (projet de test)')
     ap.add_argument('--projets', default=str(PROJETS_DEFAUT), help='dossier des projets CapCut')
     ap.add_argument('--essai-local', default='', help='écrire le projet dans ce dossier au lieu de CapCut (aucun index modifié)')
@@ -336,8 +338,8 @@ def main():
         musique_info = {'nom': mus.name}
 
     # ------------------------------------------------------------ piste texte (modifiable)
-    if a.texte:
-        texte = '\n'.join(x.strip() for x in a.texte.split('|'))
+    def faire_texte(contenu_texte, debut_us, duree_us, y, idx_piste):
+        texte = '\n'.join(x.strip() for x in contenu_texte.split('|'))
         m = copy.deepcopy(P['texte']['materiau'])
         police = fwd(a.police)
         contenu = {'text': texte, 'styles': [{
@@ -356,16 +358,33 @@ def main():
         g['id'] = guid()
         g['material_id'] = m['id']
         g['source_timerange'] = None
-        g['target_timerange'] = {'start': 0, 'duration': total}
+        g['target_timerange'] = {'start': debut_us, 'duration': duree_us}
         g['clip']['scale'] = {'x': 1.0, 'y': 1.0}
         g['clip']['rotation'] = 0.0
-        g['clip']['transform'] = {'x': 0.0, 'y': a.texte_y}
+        g['clip']['transform'] = {'x': 0.0, 'y': y}
         g['uniform_scale'] = {'on': True, 'value': 1.0}
         g['extra_material_refs'] = ajouter_extras(P['texte']['annexes'])
-        g['track_render_index'] = 2
+        g['track_render_index'] = idx_piste
+        return g
+
+    if a.texte:
         piste_t = copy.deepcopy(P['texte']['piste'])
-        piste_t.update({'id': guid(), 'segments': [g], 'flag': 0})
+        piste_t.update({'id': guid(), 'segments': [faire_texte(a.texte, 0, total, a.texte_y, 2)], 'flag': 0})
         pistes.append(piste_t)
+
+    # ------------------------------------------------------------ piste du compteur : un texte par plan, sur sa propre piste
+    if a.compteur:
+        valeurs = [v.strip() for v in re.split(r'[;,]', a.compteur) if v.strip()]
+        if len(valeurs) != len(segs):
+            raise SystemExit('--compteur : %d valeur(s) pour %d plan(s) : il en faut une par plan.' % (len(valeurs), len(segs)))
+        segs_c = []
+        t0 = 0
+        for v, s in zip(valeurs, segs):
+            segs_c.append(faire_texte(v, t0, s['dur'], a.compteur_y, 3))
+            t0 += s['dur']
+        piste_c = copy.deepcopy(P['texte']['piste'])
+        piste_c.update({'id': guid(), 'segments': segs_c, 'flag': 0})
+        pistes.append(piste_c)
 
     # ------------------------------------------------------------ draft_content
     id_timeline = guid()

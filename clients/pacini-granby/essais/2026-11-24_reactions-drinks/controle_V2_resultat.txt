@@ -1,0 +1,11 @@
+﻿[OK]     images : 844 (avec texte), 844 (sans texte), 844 attendues par le plan
+[OK]     valeurs lues dans l'ordre : 40 blocs, de 1 � 40, exactement 1, 2, 3 � 40 sans saut ni doublon
+[OK]     un seul nombre visible � la fois : 0 image(s) douteuse(s) sur 844
+[OK]     longueur de chaque chiffre = plan pr�vu (en images) : identique pour les 40
+[OK]     r�p�titions : 1re image de chaque rejeu identique � la pr�c�dente (max 0.27 sur 255, 27 rejeux)
+[OK]     changements de r�action : �carts min/max 3.3 / 21.5 sur 255 (12 changements) ; chiffres concern�s : 4, 7, 10, 13, 17, 20, 23, 26, 29, 32, 35, 38
+[OK]     chaque groupe commence sur l'image pr�vue du rush (13 groupes)
+[OK]     l�gende pr�sente sur les 844 images
+[OK]     dur�e : 28.16 s (r�f�rence 28,13 s)
+
+RESULTAT : TOUS LES CONTROLES PASSENT

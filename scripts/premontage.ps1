@@ -30,6 +30,8 @@ param(
   [double]$TexteInterligne = 0,
   [double]$TexteOmbreFlou = -1,
   [double]$TexteOmbreDecalage = -1,
+  [string]$Compteur = '',
+  [double]$CompteurCentreY = 0.585,
   [double]$DepartMusique = -1,
   [double]$FonduEntree = -1,
   [double]$FonduSortie = -1,
@@ -608,6 +610,8 @@ try {
 
   # ---- texte
   $textInfo = $null
+  $cntInfo = @()
+  if ($Compteur -and -not $Texte) { throw '-Compteur demande aussi -Texte (le compteur reprend la police, la taille et le style du texte).' }
   if ($Texte) {
     Say ''
     Say '--- Texte ---'
@@ -674,6 +678,33 @@ try {
     [IO.File]::WriteAllText((Join-Path $txtDir 'texte_parametres.md'), ($tp -join "`r`n") + "`r`n", $utf8)
     Add-Check 'OK' ("Texte créé : {0} ligne(s), centre horizontal {1} px, marges G {2} / D {3} / bas {4} px." -f $lines.Count, $textInfo.Centre, $textInfo.MargeG, $textInfo.MargeD, $textInfo.MargeBasse)
     Add-Todo 'Regarder le texte sur toute la vidéo (lisibilité, éléments cachés) et le tester sur téléphone dans l''application de diffusion.'
+
+    # ---- compteur facultatif : un chiffre par plan, même style que le texte (essai « réactions », 2026-11-24)
+    $cntInfo = @()
+    if ($Compteur) {
+      $vals = @($Compteur -split '[;,]' | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' })
+      if ($vals.Count -ne $planRows.Count) { throw ("-Compteur : {0} valeur(s) pour {1} plan(s) : il en faut une par plan." -f $vals.Count, $planRows.Count) }
+      $acc = 0.0
+      for ($k = 0; $k -lt $vals.Count; $k++) {
+        [IO.File]::WriteAllText((Join-Path $tech ("compteur{0}.txt" -f ($k + 1))), $vals[$k], $utf8)
+        $cpng = Join-Path $txtDir ("compteur_{0:00}.png" -f ($k + 1))
+        $yy = [double]($H * $CompteurCentreY)
+        $cink = $null
+        for ($pass = 1; $pass -le 2; $pass++) {
+          $dtc = ("drawtext=fontfile='{0}':textfile='compteur{1}.txt':fontsize={2}:fontcolor=0x{3}:x=(w-text_w)/2:y={4}" -f $fp, ($k + 1), (Fmt $size), $color, (Fmt $yy))
+          $fcc = ("color=c=black@0.0:s={0}x{1}:r=1,format=rgba," -f $W, $H) + $dtc + "[txt];[txt]split[a][b];[a]colorchannelmixer=rr=0:gg=0:bb=0:aa=$(Fmt $op),gblur=sigma=$(Fmt $sg)[sh];[sh][b]overlay=x=0:y=$(Fmt $sdy):format=auto,format=rgba"
+          [IO.File]::WriteAllText((Join-Path $tech 'filtre-compteur.txt'), $fcc, $utf8)
+          [void](Invoke-Ffmpeg @('-filter_complex_script', 'filtre-compteur.txt', '-frames:v', '1', $cpng) ("image du compteur {0}" -f ($k + 1)) $tech)
+          $cink = Get-InkBox $cpng ([int]($yy - 60)) ([int]($yy + $size + 60))
+          if ($pass -eq 1 -and $cink.Y1 -ge 0) { $yy = $yy + [math]::Round($H * $CompteurCentreY - ($cink.Y0 + $cink.Y1) / 2) }
+        }
+        $d = $planRows[$k].Duree
+        $cntInfo += [pscustomobject]@{ Valeur = $vals[$k]; Png = $cpng; Debut = $acc; Fin = ($acc + $d); Ink = $cink }
+        $acc += $d
+      }
+      [IO.File]::WriteAllText((Join-Path $txtDir 'compteur.txt'), (($cntInfo | ForEach-Object { "{0};{1};{2}" -f $_.Valeur, (Fmt $_.Debut), (Fmt $_.Fin) }) -join "`r`n") + "`r`n", $utf8)
+      Add-Check 'OK' ("Compteur créé : {0} valeur(s) ({1}), centre vertical mesuré à {2} % de la hauteur, même police et même taille que le texte." -f $cntInfo.Count, ($vals -join ', '), (Fmt ((($cntInfo[0].Ink.Y0 + $cntInfo[0].Ink.Y1) / 2) / $H * 100)))
+    }
   }
 
   # ---- assemblage
@@ -712,6 +743,23 @@ try {
       $ovIdx = $n + $(if ($Musique) { 1 } else { 0 })
       $extraIn = @('-loop', '1', '-framerate', $fpsTxt, '-i', $textInfo.Overlay)
       $graph = $vchain + ";[${ovIdx}:v]format=rgba[ov];[c][ov]overlay=0:0:shortest=1,format=yuv420p[v]"
+      if ($cntInfo -and $cntInfo.Count -gt 0) {
+        $graph = $vchain + ";[${ovIdx}:v]format=rgba[ov];[c][ov]overlay=0:0:shortest=1[t0]"
+        $prev = 't0'
+        $fpsC = Parse-Fps $fpsTxt; if ($fpsC -le 0) { $fpsC = 30 }
+        $fAcc = 0
+        for ($k = 0; $k -lt $cntInfo.Count; $k++) {
+          # bornes en NUMÉROS D'IMAGE (entiers) : un seul chiffre par image, changement exactement à la coupe
+          $fN = [int][math]::Round($planRows[$k].Duree * $fpsC); $fA = $fAcc; $fB = $fAcc + $fN - 1; $fAcc += $fN
+          $extraIn += @('-loop', '1', '-framerate', $fpsTxt, '-i', $cntInfo[$k].Png)
+          $ci_ = $ovIdx + 1 + $k
+          $last = ($k -eq $cntInfo.Count - 1)
+          $outLab = $(if ($last) { 'tf' } else { "t$($k + 1)" })
+          $graph += (";[${ci_}:v]format=rgba[cn$k];[$prev][cn$k]overlay=0:0:shortest=1:enable='between(n,{0},{1})'[{2}]" -f $fA, $fB, $outLab)
+          $prev = $outLab
+        }
+        $graph += ";[tf]format=yuv420p[v]"
+      }
     }
     else { $graph = $vchain + ";[c]format=yuv420p[v]" }
     $a = $inputs + $audioArgsIn + $extraIn + @('-filter_complex', $graph, '-map', '[v]')

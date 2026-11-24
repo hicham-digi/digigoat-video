@@ -45,6 +45,18 @@ Projet **« Pacini Granby - Decors Noel V5 »** (premier de la liste CapCut). L'
 - Mes deux projets de test sont dans la corbeille de CapCut.
 - **Règle** : ne jamais écrire dans ce projet ni piloter CapCut pendant que l'utilisateur y travaille (vérifier `Get-Process CapCut`). Le V5 final sera exporté par l'utilisateur depuis CapCut.
 
+## 4 bis. Essai 2 — « Réactions selon le nombre de drinks » (2026-11-24)
+
+Dossier : `clients/pacini-granby/essais/2026-11-24_reactions-drinks/` (brief, plan.csv, plan-de-montage.md, analyse-reference.md, commandes-et-parametres.md). Rush unique `DJI_20000116224450_0013_D.MP4` (vertical, aucune rotation), 10 plans, 15,2 s, légende fixe + un chiffre par plan, musique `snapgram.io_kixa7ebkaxsq.mp3` (départ 0,04 s).
+
+- **Projet CapCut** « Pacini Granby - Reactions drinks » (premier de la liste), lié au rush copié dans `...\ESSAIS\2026-11-24_reactions-drinks\rushes\`. Ouvert et refermé sans modification (vérifié). Sauvegarde : `...\SAUVEGARDES\capcut-projets_avant-pacini_granby_reactions_drinks_20261124_1416`. V5 de l'utilisateur non touché (13:46:08).
+- **MP4** : `...\ESSAIS\2026-11-24_reactions-drinks\previsualisation_reactions-drinks.mp4` (+ `_sans-texte`).
+- Outils étendus (compteur) : `premontage.ps1 -Compteur`, `capcut_projet.py --compteur`. Anciens essais non rejoués après l'ajout.
+- **V2 (mécanique de la référence)** : la référence mesure 28,13 s, 40 chiffres (1 à 40, +1), 13 réactions rejouées 3 fois (la 5ᵉ 4 fois), chaque changement de chiffre = coupe sur un rejeu du même passage. V2 = 13 passages du rush × 3 (un × 4), 40 plans, 28,16 s, chiffres 1 à 40. Projet CapCut « Pacini Granby - Reactions drinks V2 » (premier de la liste), MP4 `previsualisation_reactions-drinks_V2.mp4`, plans `plan_V2.csv` / `plan_V2_mp4.csv`, contrôle automatique `controle_V2.py` (tous les contrôles passent). V1 conservée. Sauvegarde : `...\SAUVEGARDES\capcut-projets_avant-pacini_granby_reactions_drinks_v2_20261124_1504`. Piège appris : caler les changements de chiffre sur des numéros d'image, et prévoir le début des plans MP4 4 ms avant la 1re image.
+- **Projet V2 modifié par l'utilisateur** (2026-11-24, ouvert dans CapCut à 15:21) : **ne pas le régénérer ni le toucher**. Ses ajustements ne sont pas encore documentés : demander la liste avant d'en faire des préférences (choix de la vidéo ou règle réutilisable).
+- **Directives d'efficacité** (prochaines productions) : voir `sops/workflow-nouvelle-video.md`, section « Efficacité et contrôles ». Résumé : outils existants sans nouvelle fonction, contrôles de production courts (plan, valeurs et timecodes du compteur, quelques images aux changements) et contrôles exhaustifs réservés aux défauts, temps par étape relevés sur horodatages réels (`mesures-temps_V2.md` : V2 = 24 min, dont 4 lancements du script ; encodage MP4 avec texte = 53 % du dernier lancement).- **Export modifié par l'utilisateur analysé (lecture seule)** : `clients/pacini-granby/essais/2026-11-24_reactions-drinks/analyse-export-utilisateur_V2.md`. Sa version : 15,23 s, compteur **1 à 20**, 6 réactions (3/4/3/3/3/4 répétitions), mêmes texte et positions, texte plus gras et plus gros (écart avec le guide, à confirmer), musique inchangée (départ ≈ 0,05 s), chiffre décalé de 3 images après la coupe sur 7 transitions (**involontaire, confirmé** : défaut à corriger, pas une préférence ; cause probable : textes non recalés après suppression de plans). C'est **la référence du résultat préféré pour cette vidéo**, pas encore une règle.
+- **Directive « matière disponible »** (sops/workflow-nouvelle-video.md) : évaluer réactions distinctes et pertinence des répétitions avant de bâtir le plan ; adapter compteur et durée si indicatifs (avec une courte explication) ; signaler le conflit avant le rendu s'ils sont imposés ; compteur continu jusqu'au nombre retenu.- Encore à faire par l'utilisateur : écouter/autoriser la musique, consentement de l'employée, marque de vin (Cúmaro / Umani Ronchi) visible en fond, chiffres et « tu », lisibilité sur téléphone. Rien de ces choix n'est une règle de marque.
+
 ## 5. Décisions
 
 **Validées par l'utilisateur** (détail dans `procedure-premontage.md`, catégorie 2) : français québécois ; public familles de classe moyenne et élevée ; ton gourmand, naturel, énergique ; montage dynamique ; musique d'ambiance un peu décontractée ; couleurs et police du guide de marque ; ne jamais reprendre d'offres ou d'éléments d'un autre restaurant ; direction visuelle de la V4 (texte) **pour cette vidéo seulement** ; flux par défaut (projet CapCut, modèle autonome, rushes sources, plan préparé par Claude) ; **orientation analysée par Claude fichier par fichier, questions à l'utilisateur seulement pour les rushes ambigus, en un seul message**.
@@ -66,6 +78,16 @@ Projet **« Pacini Granby - Decors Noel V5 »** (premier de la liste CapCut). L'
 - **Git** : le terminal n'a pas les identifiants GitHub ; le push est fait par l'utilisateur dans GitHub Desktop (« Push origin ») ou échoue. Le caractère privé du dépôt n'a pas pu être vérifié.
 - **Technique** : `premontage.ps1` doit rester en UTF-8 **avec BOM** (PowerShell 5.1) ; dans les filtres ffmpeg, `metadata=print:file=` veut un chemin relatif ; pas de détection de visages, de logos ni de texte promotionnel ; zones de sécurité des réseaux (haut 250, bas 450, côtés 130 px) = hypothèses.
 - Les analyses de musique (départ, fin) sont faites sur le signal, **pas à l'oreille**.
+
+## 6 bis. Format « Réactions avec compteur » — décisions du 2026-11-24
+
+Fiche : `sops/format-reactions-compteur.md`. Trois niveaux à ne pas mélanger :
+
+- **Principes réutilisables du format (confirmés)** : réactions nettes, lisibles et contrastées ; passages faibles ou redondants écartés ; compteur et durée adaptés à la matière ; répétitions variables selon l'intérêt humoristique ; progression terminant sur une réaction forte ; compteur continu ; **chiffre synchronisé avec la coupe par défaut** (sauf indication contraire). Nombre et durée indicatifs : adaptables avec explication brève ; imposés : signaler le conflit avant le rendu.
+- **Choix propres à la vidéo de l'essai 2 (pas des valeurs fixes)** : 20 chiffres, 6 réactions, répétitions 3/4, 15,23 s.
+- **Texte** : pour ce format, la lisibilité de l'export de l'utilisateur est la **référence visuelle** (plus gras, ~+12 à +16 %). Police **non identifiée, non nommée** ; **pas généralisé à la marque** (le guide cite Montserrat Regular).
+- Le décalage du chiffre dans l'export de l'utilisateur était **involontaire** (défaut, pas une préférence).
+- **À faire (non fait à ce jour)** : une **version corrigée** (V3) de la vidéo avec chiffres synchronisés sur les coupes, **nouveau projet CapCut** sans toucher au projet « Pacini Granby - Reactions drinks V2 » de l'utilisateur. Demande l'état du projet avant (`Get-Process CapCut`, heure d'écriture). Le style de texte à utiliser (police, taille) est à préciser avec l'utilisateur, sans inventer le nom de la police de son export.
 
 ## 7. Prochaine étape : une deuxième vidéo Pacini Granby
 

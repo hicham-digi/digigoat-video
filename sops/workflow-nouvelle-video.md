@@ -35,3 +35,41 @@
 - Les choix d'une vidéo (plans, ordre, durées, départ musical, rotation de **ces** fichiers) ne deviennent jamais des règles permanentes sans confirmation.
 - Un projet CapCut existant n'est jamais modifié sans demande explicite. Si l'utilisateur travaille dans CapCut, ne pas piloter son interface ni écrire dans son projet.
 - Les rushes, musiques et exports restent hors du dépôt.
+
+## Efficacité et contrôles — directives de l'utilisateur (2026-11-24, après l'essai 2)
+
+Contexte : la V2 « réactions » a pris environ 24 min de traitement (mesures : `clients/pacini-granby/essais/2026-11-24_reactions-drinks/mesures-temps_V2.md`). L'utilisateur demande, pour les prochaines productions :
+
+1. **Réutiliser les outils corrigés et les formats déjà validés.** Ne pas développer de nouvelle fonction si elle n'est pas nécessaire au brief. Les outils actuels (`premontage.ps1`, `capcut_projet.py`, `controle_V2.py`) couvrent déjà le texte fixe, le compteur et les plans répétés.
+2. **Séparer les contrôles de production et les contrôles de développement.**
+
+| | Contrôles de production (toujours) | Contrôles de développement (seulement si besoin) |
+| --- | --- | --- |
+| Quand | À chaque vidéo | Un défaut détecté, ou une fonction de l'outil modifiée |
+| Contenu | Rush lisible et orientation décidée ; plan (rush, début, durée, total) ; durée du MP4 ou du projet ; texte, musique et plans présents ; ouverture du projet ; sauvegarde faite ; rushes d'origine intacts | Analyse image par image du MP4 (ex. `controle_V2.py`), non-régression SSIM d'anciens essais, comparaisons exhaustives |
+| Coût mesuré | secondes | quelques dizaines de secondes à plusieurs minutes |
+
+3. **Compteur** : vérifier d'abord les **valeurs et les timecodes** dans le plan et dans le projet (40 valeurs de 1 à 40, +1 à chaque fois, chaque valeur alignée sur le début et la durée de son plan, aucun chevauchement) ; puis contrôler seulement **quelques images aux changements** (première image de chaque nouveau chiffre, dernière du précédent). Relancer le contrôle exhaustif (`controle_V2.py`) **seulement si une anomalie apparaît**.
+4. **Questions** : les regrouper en **un seul message**. Comptes rendus **courts**.
+5. **Temps par étape** : relever à chaque production le temps de l'analyse, de la génération, du rendu, de la sauvegarde et des contrôles, **à partir d'horodatages réels** (jamais d'estimations), puis nommer les étapes les plus longues. Modèle : `mesures-temps_V2.md`. Ce qui n'est pas mesuré est écrit comme tel.
+
+Rappel de prudence : un projet CapCut que l'utilisateur a modifié n'est **jamais régénéré** ni modifié. S'il est ouvert dans CapCut (vérifier `Get-Process CapCut` et l'heure de dernière écriture du projet), ne pas l'ouvrir, même en lecture, sans en avoir parlé.
+
+Les ajustements que l'utilisateur fait lui-même dans CapCut ne deviennent des préférences qu'après qu'il en a **donné la liste** et dit lesquels sont réutilisables (choix de la vidéo ou règle).
+
+## Évaluer la matière avant de construire le découpage — directive de l'utilisateur (2026-11-24, après la V2 de l'essai 2)
+
+Constat : pour la vidéo « réactions », l'objectif de 40 chiffres a été suivi sans se demander si le rush le permettait. L'utilisateur a ramené la vidéo à 20 chiffres et 15 s (6 réactions, `analyse-export-utilisateur_V2.md`). Pour les prochaines vidéos, **avant de bâtir le plan** :
+
+1. **Repérer les réactions (ou plans) distincts et réellement exploitables** dans le rush : gestes nets, contrastés, utilisables seuls.
+2. **Évaluer la pertinence des répétitions**, pas seulement leur faisabilité technique : une réaction répétée doit rester drôle ou utile à chaque rejeu.
+3. **Adapter le compteur et la durée au contenu disponible**, tout en gardant une **progression continue** du compteur jusqu'au nombre retenu (1, 2, 3 … N, +1 à chaque fois, aucun saut).
+4. **Utiliser la référence comme guide de mécanique et de style**, pas comme un gabarit chiffré à copier.
+5. **Nombre et durée indicatifs** (ex. « 15-20 s », « 1, 2, 3, etc. », un nombre cité en exemple) : Claude **peut les adapter** et explique son choix en une ou deux phrases.
+6. **Nombre et durée imposés explicitement** comme contraintes obligatoires : si les rushes ne les soutiennent pas, **signaler le conflit avant le rendu** (avec ce que la matière permet), sans rendre d'abord.
+
+**Format « Réactions avec compteur »** : les principes confirmés par l'utilisateur (2026-11-24), la synchronisation par défaut du chiffre avec la coupe, ce qui est propre à la vidéo et ce qui n'est pas généralisé à la marque sont dans **`sops/format-reactions-compteur.md`**.
+
+Pour l'essai 2, la version exportée par l'utilisateur est **la référence du résultat qu'il préfère** pour cette vidéo : l'analyser avant de lui demander de décrire ses changements. Ses ajustements restent des choix de cette vidéo tant qu'il ne les a pas confirmés comme règles.
+
+**Piège constaté (essai 2, confirmé involontaire par l'utilisateur)** : dans CapCut, supprimer ou raccourcir des plans ne déplace pas les textes des chiffres, qui sont sur une piste séparée. Dans la version modifiée, 7 chiffres sont apparus 3 images (0,1 s) après la coupe. Conséquences : (1) c'est un défaut, jamais une préférence ; (2) au contrôle de production, vérifier l'alignement du chiffre sur la coupe aux changements ; (3) après une modification de l'utilisateur dans CapCut, rappeler que les chiffres sont à recaler ou à supprimer avec leur plan. Aucune fonction n'est ajoutée pour l'instant.

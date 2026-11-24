@@ -1,0 +1,41 @@
+ordre;rush;debut;duree;nom;note
+01;DJI_20000116224450_0013_D;0.396;0.634;G01_calme_rep1;Compteur 1 - sourire calme (boucle quasi invisible, comme le debut de la reference)
+02;DJI_20000116224450_0013_D;0.396;0.634;G01_calme_rep2;Compteur 2 - sourire calme (boucle quasi invisible, comme le debut de la reference)
+03;DJI_20000116224450_0013_D;0.396;0.634;G01_calme_rep3;Compteur 3 - sourire calme (boucle quasi invisible, comme le debut de la reference)
+04;DJI_20000116224450_0013_D;1.297;0.634;G02_pouces_rep1;Compteur 4 - les mains montent vers les pouces
+05;DJI_20000116224450_0013_D;1.297;0.634;G02_pouces_rep2;Compteur 5 - les mains montent vers les pouces
+06;DJI_20000116224450_0013_D;1.297;0.634;G02_pouces_rep3;Compteur 6 - les mains montent vers les pouces
+07;DJI_20000116224450_0013_D;5.435;0.734;G03_mains-ouvertes_rep1;Compteur 7 - tete penchee, mains ouvertes
+08;DJI_20000116224450_0013_D;5.435;0.734;G03_mains-ouvertes_rep2;Compteur 8 - tete penchee, mains ouvertes
+09;DJI_20000116224450_0013_D;5.435;0.734;G03_mains-ouvertes_rep3;Compteur 9 - tete penchee, mains ouvertes
+10;DJI_20000116224450_0013_D;8.004;0.734;G04_regard-de-cote_rep1;Compteur 10 - elle regarde de cote
+11;DJI_20000116224450_0013_D;8.004;0.734;G04_regard-de-cote_rep2;Compteur 11 - elle regarde de cote
+12;DJI_20000116224450_0013_D;8.004;0.734;G04_regard-de-cote_rep3;Compteur 12 - elle regarde de cote
+13;DJI_20000116224450_0013_D;9.939;0.734;G05_parle_rep1;Compteur 13 - elle parle en souriant
+14;DJI_20000116224450_0013_D;9.939;0.734;G05_parle_rep2;Compteur 14 - elle parle en souriant
+15;DJI_20000116224450_0013_D;9.939;0.734;G05_parle_rep3;Compteur 15 - elle parle en souriant
+16;DJI_20000116224450_0013_D;9.939;0.734;G05_parle_rep4;Compteur 16 - elle parle en souriant
+17;DJI_20000116224450_0013_D;11.241;0.834;G06_dix-doigts-montee_rep1;Compteur 17 - les mains s ouvrent, doigts ecartes
+18;DJI_20000116224450_0013_D;11.241;0.834;G06_dix-doigts-montee_rep2;Compteur 18 - les mains s ouvrent, doigts ecartes
+19;DJI_20000116224450_0013_D;11.241;0.834;G06_dix-doigts-montee_rep3;Compteur 19 - les mains s ouvrent, doigts ecartes
+20;DJI_20000116224450_0013_D;12.208;1.001;G07_dix-doigts-gestes_rep1;Compteur 20 - doigts ecartes qui bougent
+21;DJI_20000116224450_0013_D;12.208;1.001;G07_dix-doigts-gestes_rep2;Compteur 21 - doigts ecartes qui bougent
+22;DJI_20000116224450_0013_D;12.208;1.001;G07_dix-doigts-gestes_rep3;Compteur 22 - doigts ecartes qui bougent
+23;DJI_20000116224450_0013_D;13.209;0.767;G08_mains-bas_rep1;Compteur 23 - mains qui redescendent, elle parle
+24;DJI_20000116224450_0013_D;13.209;0.767;G08_mains-bas_rep2;Compteur 24 - mains qui redescendent, elle parle
+25;DJI_20000116224450_0013_D;13.209;0.767;G08_mains-bas_rep3;Compteur 25 - mains qui redescendent, elle parle
+26;DJI_20000116224450_0013_D;14.210;0.968;G09_mains-sur-la-tete_rep1;Compteur 26 - les mains montent sur la tete
+27;DJI_20000116224450_0013_D;14.210;0.968;G09_mains-sur-la-tete_rep2;Compteur 27 - les mains montent sur la tete
+28;DJI_20000116224450_0013_D;14.210;0.968;G09_mains-sur-la-tete_rep3;Compteur 28 - les mains montent sur la tete
+29;DJI_20000116224450_0013_D;15.211;0.467;G10_mains-qui-tombent_rep1;Compteur 29 - les mains retombent (court)
+30;DJI_20000116224450_0013_D;15.211;0.467;G10_mains-qui-tombent_rep2;Compteur 30 - les mains retombent (court)
+31;DJI_20000116224450_0013_D;15.211;0.467;G10_mains-qui-tombent_rep3;Compteur 31 - les mains retombent (court)
+32;DJI_20000116224450_0013_D;15.778;0.634;G11_rire-1_rep1;Compteur 32 - elle rit
+33;DJI_20000116224450_0013_D;15.778;0.634;G11_rire-1_rep2;Compteur 33 - elle rit
+34;DJI_20000116224450_0013_D;15.778;0.634;G11_rire-1_rep3;Compteur 34 - elle rit
+35;DJI_20000116224450_0013_D;16.379;0.567;G12_rire-2_rep1;Compteur 35 - elle rit encore
+36;DJI_20000116224450_0013_D;16.379;0.567;G12_rire-2_rep2;Compteur 36 - elle rit encore
+37;DJI_20000116224450_0013_D;16.379;0.567;G12_rire-2_rep3;Compteur 37 - elle rit encore
+38;DJI_20000116224450_0013_D;16.946;0.434;G13_main-au-visage_rep1;Compteur 38 - dernier geste, fin du fichier
+39;DJI_20000116224450_0013_D;16.946;0.434;G13_main-au-visage_rep2;Compteur 39 - dernier geste, fin du fichier
+40;DJI_20000116224450_0013_D;16.946;0.434;G13_main-au-visage_rep3;Compteur 40 - dernier geste, fin du fichier

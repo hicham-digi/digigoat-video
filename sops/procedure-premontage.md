@@ -60,6 +60,10 @@ Seulement ce que tu as confirmé toi-même. Détail dans `clients/pacini-granby/
 - Les consignes du guide de marque pour les vidéos (musique sans paroles explicites, personnes identifiables avec consentement, promotions seulement avec l'autorisation du siège, « MD » dans « Bar à PainMD », format 9:16). Elles sont appliquées dans l'essai et marquées « À valider » dans `marque.md`.
 - Ne pas utiliser de plans montrant des personnes identifiables sans autorisation confirmée.
 
+### Préférences validées pour un **format** (pas pour toute la marque)
+
+- Format « Réactions avec compteur » : principes confirmés le 2026-11-24 (réactions nettes et contrastées, passages faibles écartés, compteur et durée adaptés à la matière, répétitions variables, progression terminant sur une réaction forte, changement de chiffre synchronisé avec la coupe par défaut, lisibilité du texte de l'export de l'utilisateur comme référence visuelle). Détail, limites et choix propres à la vidéo : **`sops/format-reactions-compteur.md`**.
+
 ---
 
 ## Catégorie 3 — Choix propres à l'essai « Décors de Noël »
