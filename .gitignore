@@ -1,0 +1,57 @@
+# --- Rushes, exports et fichiers lourds (restent dans les dossiers de production) ---
+rushes/
+exports/
+export/
+renders/
+production/
+
+# Vidéos
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.webm
+*.m4v
+*.mxf
+*.wmv
+
+# Audio lourd (musique, voix, enregistrements)
+*.wav
+*.aif
+*.aiff
+*.flac
+*.mp3
+*.m4a
+*.aac
+
+# Projets et caches CapCut / montage
+*.draft
+CapCut Drafts/
+Cache/
+Proxy/
+Proxies/
+
+# --- Clés d'accès, mots de passe, secrets ---
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+*.p12
+secrets/
+credentials*.json
+*token*.json
+*secret*
+
+# --- Configuration locale de Claude Code ---
+.claude/settings.local.json
+
+# --- Fichiers système Windows et éditeurs ---
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.vscode/
+.idea/
+*.tmp
+~$*
