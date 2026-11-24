@@ -17,7 +17,7 @@ Système de travail pour le montage vidéo des marques clientes : directives par
 | `CLAUDE.md` | Instructions permanentes lues par Claude Code (comment travailler, quoi lire, quelles règles respecter) |
 | `README.md` | Ce mode d'emploi |
 | `sops/` | Procédures : montage, contrôle qualité, emplacements des fichiers lourds |
-| `clients/` | Un dossier par marque, avec 4 fichiers : `marque.md`, `montage.md`, `references.md`, `retours-client.md` |
+| `clients/` | Un dossier par marque, avec 4 fichiers : `marque.md`, `montage.md`, `references.md`, `retours-client.md` (+ `offres-et-services.md` et `organisation.md` si utiles). Index : `clients/README.md` |
 | `templates/brief-video.md` | Formulaire à remplir pour chaque nouvelle vidéo |
 | `scripts/` | Script de prémontage `premontage.ps1` et son mode d'emploi (`scripts/README.md`) |
 | `.claude/agents/` | Futurs agents spécialisés (vide pour l'instant) |

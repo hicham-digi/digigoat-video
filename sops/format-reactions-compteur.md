@@ -31,6 +31,7 @@ Mesurée sur la vidéo de référence : 28,13 s ; compteur de 1 à 40, +1 à cha
 - Le style de texte de l'export (gras, plus grand) est une **référence visuelle pour ce format**, pas une règle de la **marque** Pacini Granby. Le guide de marque cite **Montserrat Regular** : l'écart est connu et n'est pas tranché pour toute la marque. Ne pas l'appliquer à d'autres formats ni à d'autres marques sans confirmation.
 - Les positions du texte (légende vers 52 %, compteur vers 58,5 % de la hauteur) viennent de la référence mesurée et ont été gardées par l'utilisateur ; elles restent **à confirmer** pour un autre rush.
 - Musique : non écoutée, autorisation non confirmée (voir `REPRISE.md`).
+- **V3 de l'essai 2 validée par l'utilisateur (2026-11-24)** : texte Montserrat Bold 53 px, légende à 52 %, compteur à 58,5 %. Validation **pour cet essai** ; elle ne généralise pas la police ni la taille. En cas de modification ciblée de cette vidéo, ces réglages sont conservés (voir `sops/workflow-nouvelle-video.md`, « Modification ciblée »).
 
 ## Contrôles de production pour ce format (courts)
 

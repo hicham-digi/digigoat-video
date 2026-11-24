@@ -112,3 +112,4 @@ Ils viennent du guide (pages 4 à 6). Ils ne deviennent des règles de montage q
 ## Notes
 
 - Le guide est un document de marque Pacini. Il ne précise pas quelles parties valent seulement pour Granby : À confirmer.
+- Constat du 2026-11-24 : la copie Drive du guide (dossier `YANNICK [PACINI GRANBY]/2-BRAND IDENTITY`) ne nomme aucun restaurant et parle du « siège social » : c'est un document **commun** Pacini. Sa portée pour Marché Central est traitée dans `clients/pacini-marche-central/marque.md`.

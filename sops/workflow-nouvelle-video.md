@@ -73,3 +73,14 @@ Constat : pour la vidéo « réactions », l'objectif de 40 chiffres a été sui
 Pour l'essai 2, la version exportée par l'utilisateur est **la référence du résultat qu'il préfère** pour cette vidéo : l'analyser avant de lui demander de décrire ses changements. Ses ajustements restent des choix de cette vidéo tant qu'il ne les a pas confirmés comme règles.
 
 **Piège constaté (essai 2, confirmé involontaire par l'utilisateur)** : dans CapCut, supprimer ou raccourcir des plans ne déplace pas les textes des chiffres, qui sont sur une piste séparée. Dans la version modifiée, 7 chiffres sont apparus 3 images (0,1 s) après la coupe. Conséquences : (1) c'est un défaut, jamais une préférence ; (2) au contrôle de production, vérifier l'alignement du chiffre sur la coupe aux changements ; (3) après une modification de l'utilisateur dans CapCut, rappeler que les chiffres sont à recaler ou à supprimer avec leur plan. Aucune fonction n'est ajoutée pour l'instant.
+
+## Modification ciblée : conserver les éléments validés — directive de l'utilisateur (2026-11-24, validation de la V3 de l'essai 2)
+
+Quand l'utilisateur demande **une modification ciblée** (ex. corriger l'alignement du chiffre), seul ce qui est demandé change. Tout le reste, **déjà validé ou choisi par lui**, est conservé tel quel : notamment **la police, la taille et la position du texte**, mais aussi les passages, l'ordre, la musique et les durées. Ne rien remplacer sans demande explicite.
+
+1. **Reprendre les valeurs de la version précédente**, pas des valeurs par défaut (une police ou une taille « par défaut » n'est jamais un réglage validé).
+2. **Réglage introuvable** (police, taille, position, couleur) : le chercher d'abord dans le **projet CapCut source**, quand c'est possible, **en lecture seule** : le projet de l'utilisateur n'est jamais modifié, CapCut n'est pas piloté s'il y travaille (voir « Rappel de prudence »), et la lecture se fait si besoin sur une copie.
+3. **Approximation nécessaire** (valeur introuvable, mesurée à l'œil ou par proxy) : la **signaler à l'utilisateur avant de l'appliquer**, avec la valeur proposée et son origine. Pas d'application silencieuse.
+4. Si un changement hors demande semble utile, le **proposer** en une phrase au lieu de l'appliquer.
+
+Origine : la V3 de l'essai 2 avait repris un réglage de texte choisi par Claude faute de connaître celui de l'export de l'utilisateur ; la V3 a été **validée pour cet essai** (2026-11-24) avec cette correction de méthode pour la suite.

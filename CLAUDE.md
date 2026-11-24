@@ -18,7 +18,8 @@ Ce fichier est lu par Claude Code au début de chaque session. Il décrit commen
    - `marque.md` : public, langue, ton, couleurs, polices, logos, éléments à éviter ;
    - `montage.md` : rythme, transitions, cadrage, sous-titres, musique, introduction, fin ;
    - `references.md` : vidéos approuvées et ce qu'il faut reproduire ;
-   - `retours-client.md` : corrections validées et règles à appliquer.
+   - `retours-client.md` : corrections validées et règles à appliquer ;
+   - si présents : `offres-et-services.md` (services, produits, offres datées) et `organisation.md` (contacts, responsabilités, circuit de validation). Index : `clients/README.md`.
 3. Les procédures du dossier `sops/` (montage, contrôle qualité, emplacements des fichiers).
 
 ## Flux par défaut pour une nouvelle vidéo
@@ -44,6 +45,9 @@ L'utilisateur fournit seulement **le dossier des rushes, le sujet, la référenc
 7. **Un lien Drive seul ne suffit pas.** Pour traiter un fichier, il doit être accessible localement. Si ce n'est pas le cas, demande à l'utilisateur de le placer à l'emplacement prévu.
 8. **Nouvelle correction du client ?** Propose de l'ajouter dans `retours-client.md` de la marque, avec la date et la règle à appliquer aux prochains montages.
 9. **N'installe aucun outil et ne crée aucun script ou agent actif sans l'accord explicite de l'utilisateur.**
+10. **Modification ciblée = on conserve le reste.** Quand l'utilisateur demande un changement précis, garde les autres éléments validés (police, taille et position du texte, passages, musique…). Un réglage introuvable se cherche d'abord dans le projet CapCut source, en lecture seule ; toute approximation est signalée avant d'être appliquée (voir `sops/workflow-nouvelle-video.md`).
+11. **Champ entre crochets non rempli = « À compléter ».** Un libellé de modèle (« [NOM] », « [CANAUX] ») ou un menu d'options exclusives sans sélection (« [OUI / NON] ») n'est **pas** une confirmation : ne l'enregistre pas comme réponse de l'utilisateur. Une réponse peut en revanche contenir **plusieurs valeurs confirmées** (« [COURRIEL, WHATSAPP] ») : ne pas la traiter automatiquement comme un modèle non rempli (précision de l'utilisateur, 2026-11-24). En cas de doute, enregistrer la valeur comme **interprétée**, avec sa source, et la signaler pour confirmation.
+12. **Fiches de marque : une information, un seul fichier.** Pour chaque information, indique la source et la date, et distingue directive actuelle / exemple historique / à confirmer. Les légendes ou textes de référence ne deviennent pas des directives de montage sans confirmation.
 
 ## État actuel du projet
 
