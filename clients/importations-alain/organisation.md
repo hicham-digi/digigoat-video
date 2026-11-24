@@ -30,10 +30,12 @@ Conséquence : l'absence d'approbation du client ne signifie pas que ses retours
 | --- | --- | --- | --- |
 | Canal | Usage | Source | Statut |
 | --- | --- | --- | --- |
-| **Courriel**, **WhatsApp** | À préciser (l'Étendue 2026 prévoit WhatsApp pour les échanges rapides et l'approbation des publications, le courriel pour les communications formelles) | [Toi] : liste « courriel, WhatsApp » (2026-11-24), puis précision du même jour indiquant que ces listes sont des **valeurs confirmées** | Actuel (**interprété** : la ligne de confirmation reçue était un libellé de modèle ; à corriger si inexact) |
-| Telegram, appels, Google Drive | Transfert de vidéos et fichiers lourds, clarifications, partage de fichiers | [Étendue 2026] | **Prévu, non confirmé** comme pratique actuelle |
+**Canaux utilisés : À confirmer.** Aucune réponse explicite de ta part (hors champs restés entre crochets) n'a été retrouvée. Un champ resté entre crochets, y compris « [COURRIEL, WHATSAPP] » et « [CANAUX UTILISÉS] », **ne confirme jamais** une information (règle du 2026-11-24).
 
-Historique : une version intermédiaire de ce fichier avait repassé les canaux à « À compléter » ; elle est corrigée.
+| Canal | Usage | Source | Statut |
+| --- | --- | --- | --- |
+| Courriel, WhatsApp | Valeurs vues uniquement dans un champ resté entre crochets (2026-11-24) ; l'Étendue 2026 prévoit WhatsApp pour les échanges rapides et l'approbation des publications, le courriel pour les communications formelles | [Étendue 2026] (prévu) | **À confirmer** |
+| Telegram, appels, Google Drive | Transfert de vidéos et fichiers lourds, clarifications, partage de fichiers | [Étendue 2026] | **Prévu, non confirmé** comme pratique actuelle |
 
 ## Responsabilités
 
@@ -54,4 +56,4 @@ Seuls la validation interne par Hicham et l'absence d'approbation du client sont
 | --- | --- | --- | --- |
 | Validation interne | Hicham [Toi] | — | À compléter |
 | Approbation du client | Aucune requise [Toi] | — | — |
-| Envoi / diffusion | À compléter | Courriel, WhatsApp (interprété, voir ci-dessus) | À compléter |
+| Envoi / diffusion | À compléter | À confirmer (voir « Canaux ») | À compléter |

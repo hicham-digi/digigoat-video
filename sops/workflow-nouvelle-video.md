@@ -15,7 +15,7 @@
 
 ## Étapes (faites par Claude)
 
-1. **Lire** `CLAUDE.md`, les fichiers de la marque dans `clients/<marque>/` et le brief s'il existe. Repérer les champs « À compléter » et ne rien inventer.
+1. **Lire** `CLAUDE.md`, les fichiers de la marque dans `clients/<marque>/` et le brief s'il existe. Repérer les champs « À compléter » et ne rien inventer. **Ne demander à l'utilisateur que les champs manquants nécessaires à cette vidéo**, en un seul message groupé ; ne pas bloquer sur des coordonnées, tarifs ou contacts qui ne seront pas utilisés (les fiches de marque sont volontairement partielles).
 2. **Inventorier les rushes** en lecture seule (`ffprobe` : format, durée, rotation, fréquence, son). Rien n'est modifié ni déplacé.
 3. **Orientation de chaque fichier** : `capcut_projet.py --tests-orientation <dossier>` crée une image par rush (origine | horaire | anti-horaire). Claude **regarde chaque image lui-même** et décide en citant l'indice (texte lisible, verre ou objet à l'endroit, gravité, bas du cadre, personnes). Il n'y a **pas de validation manuelle systématique** de chaque rush par l'utilisateur.
    - **Décidé** : au moins un indice net et aucun indice contradictoire. La décision et son indice sont notés dans `plan-de-montage.md`.

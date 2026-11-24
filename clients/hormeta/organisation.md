@@ -25,8 +25,7 @@ Remarque : l'absence d'approbation requise ne dispense pas de respecter les règ
 
 ## Canaux de communication
 
-**Courriel, WhatsApp** : valeurs confirmées [Toi, liste « courriel, WhatsApp, autre » du 2026-11-24, puis précision du même jour indiquant que ces listes sont des valeurs confirmées]. **Statut : actuel, interprété** (la ligne de confirmation reçue était un libellé de modèle ; à corriger si inexact). **« Autre » : non précisé** : **À compléter**. L'Étendue 2026 évoque aussi Telegram, des appels et Google Drive pour Marie-Ève : **prévus, non confirmés** pour Hormeta.
-Historique : une version intermédiaire de ce fichier avait repassé les canaux à « À compléter » ; elle est corrigée.
+**Canaux utilisés : À confirmer.** Aucune réponse explicite de ta part (hors champs restés entre crochets) n'a été retrouvée. Les valeurs « courriel, WhatsApp, autre » n'apparaissent que dans un champ resté entre crochets, qui **ne confirme jamais** une information (règle du 2026-11-24) ; « autre » n'est de toute façon pas précisé. L'Étendue 2026 évoque des canaux communs pour Marie-Ève (WhatsApp, Telegram, courriel, appels, Drive) : **prévus, non confirmés** pour Hormeta.
 
 ## Responsabilités (prévues par l'Étendue 2026, à confirmer)
 
