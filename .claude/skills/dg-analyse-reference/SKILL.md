@@ -1,6 +1,6 @@
 ---
 name: dg-analyse-reference
-description: Analyse une vidéo de référence (rythme, plans, cadrage, textes, transitions, son) en séparant ce qui est mesuré, observé et interprété, puis rend un compte rendu court avec des recommandations liées au brief. Analyse et conseil seulement. Appel manuel avec /dg-analyse-reference.
+description: Analyse une vidéo de référence (rythme, plans, cadrage, textes, transitions, son) en séparant ce qui est mesuré, observé et interprété, puis rend un compte rendu court (cinq observations au maximum, puis les limites). Recommandations sur demande. Analyse et conseil seulement. Appel manuel avec /dg-analyse-reference.
 disable-model-invocation: true
 ---
 
@@ -51,6 +51,7 @@ Règles de séparation :
 - Les offres, logos, coordonnées et appels à l'action visibles dans la référence ne sont jamais à reprendre automatiquement.
 - Un choix d'un ancien essai n'est pas une règle. Ce que tu observes dans la référence n'en est pas une non plus : cela guide au plus **cette** vidéo.
 - Les consignes de l'utilisateur pour cette vidéo ont priorité. Si elles, la référence et les règles de la marque se contredisent, signale le conflit au lieu de trancher en silence.
+- Si une correction du client apparaît, **propose** de l'ajouter dans `retours-client.md` ; ne l'ajoute pas.
 
 ## D'abord : la vidéo peut-elle être examinée ?
 
@@ -65,25 +66,49 @@ Limites à rappeler quand elles s'appliquent :
 - Sans outil qui le mesure (ex. détection des temps de la musique), n'affirme pas qu'une coupe « tombe sur le temps ».
 - Une police ne s'identifie pas avec certitude : propose au mieux une ressemblance, présentée comme telle.
 
+## Commencer léger, approfondir seulement si c'est justifié
+
+**1. Premier passage, par défaut :**
+
+- les **métadonnées** (`ffprobe` : durée, format, résolution, images par seconde) ;
+- une **sélection limitée d'images** : 20 au maximum, réparties du début à la fin, de préférence réunies sur **une planche synthèse**. N'enregistre pas les images une par une si la planche suffit.
+
+Rédige le compte rendu à partir de ce passage s'il suffit. Un échantillon ne prouve ni le nombre de plans, ni un moment à l'image près, ni qu'une chose reste vraie sur toute la vidéo : donne des moments approximatifs, écris « non mesuré » ou « vu sur les images échantillonnées ».
+
+**2. Mesures approfondies : seulement sur demande explicite de l'utilisateur, ou pour lever une incertitude importante pour le brief** (ou pour les consignes du message), c'est-à-dire un doute dont la réponse changerait une observation utile ou une décision. La curiosité, la recherche d'un compte rendu plus complet ou la présence d'un outil ne suffisent pas. Sont des mesures approfondies : détection des coupes, des noirs ou des fondus, comparaison entre images (rejeux, cadrage), positions au pixel, contrôle image par image et mesures du son.
+
+- Limite la mesure à la question posée. Pour un moment précis, extrais d'abord seulement les images autour de ce moment.
+- **N'extrais toutes les images que si une vérification précise le justifie** et qu'une extraction ciblée ne suffit pas. **Explique alors pourquoi** avant de le faire (la question à trancher), puis rappelle la raison dans les limites. Une demande générale d'analyse ne suffit pas.
+- Si une incertitude ne justifie pas d'approfondir, signale-la dans les limites.
+
 ## Les trois niveaux, toujours séparés
 
 | Niveau | Définition | Ce qu'il faut indiquer |
 | --- | --- | --- |
-| **Mesuré** | Valeur obtenue **dans cette session** avec un outil, ou lue dans une preuve disponible | L'outil ou la preuve, et le réglage s'il change le résultat (seuil, fréquence des images extraites) |
+| **Mesuré** | Valeur obtenue **dans cette session**, avec un outil, sur la vidéo analysée | L'outil, et le réglage s'il change le résultat (seuil, fréquence des images extraites) |
 | **Observé** | Ce que tu vois sur les images réellement examinées | Le moment (temps ou numéro d'image) |
 | **Interprété** | Effet ou intention que tu déduis | Une formulation prudente : « semble », « probablement » |
 
-- Sans outil ni preuve, écris **« non mesuré »**. Ne transforme jamais une impression en chiffre.
+- Sans mesure faite avec un outil, écris **« non mesuré »**. Ne transforme jamais une impression en chiffre.
 - Une détection automatique (coupe, silence, noir) est un **candidat** : écris « détecté, non contrôlé » tant que tu n'as pas vérifié.
 - Une valeur reprise d'un ancien document est citée avec sa source et sa date ; elle n'est pas présentée comme revérifiée.
 - La précision annoncée ne dépasse pas celle de la méthode : des images prises toutes les demi-secondes ne prouvent pas un moment à l'image près.
 - « Aucun résultat » après une commande en échec n'est pas une mesure : vérifie que la commande a réussi.
 
+## Fiches client et vidéo, à ne pas confondre
+
+- **Vérifié dans la vidéo** : ce que tu as mesuré ou observé sur cette vidéo, dans cette session.
+- **Lu dans les fiches (non vérifié dans la vidéo)** : ce qui vient des fiches client, du brief, d'une fiche de format ou d'un ancien document. Cite le fichier, la date si elle est indiquée et le statut de la règle.
+- Une information lue ne devient jamais « mesurée » ni « observée » sans vérification sur la vidéo. Ce que la vidéo ne permet pas de prouver (ex. police ou taille exacte) reste « lu ».
+- Si la vidéo concorde avec une fiche ou la contredit, présente les deux séparément. Si tu avais lu la valeur avant de la vérifier, dis-le : le contrôle n'était pas à l'aveugle.
+
 ## La méthode, en six axes
 
 Utilise seulement les outils **déjà présents** sur le poste. S'il en manque un, indique la limite.
 
-| Axe | Mesurer | Observer | Pièges à contrôler |
+Les six axes servent à choisir ce qui compte, pas à tout mesurer ni à remplir six rubriques. La colonne « Mesures possibles » ne s'applique, hors métadonnées, que dans les cas prévus pour les mesures approfondies.
+
+| Axe | Mesures possibles | Observer | Pièges à contrôler |
 | --- | --- | --- | --- |
 | **Rythme** | Durée totale (`ffprobe`), nombre de plans vérifiés, durées min, médiane et max | Accélérations, pauses, ouverture, chute | Une moyenne cache souvent la structure : regarde la suite des durées |
 | **Plans** | Début et fin de chaque plan (détection de changements d'image avec `ffmpeg`, seuil indiqué) | Sujet et action de chaque plan, passages répétés ou rejoués | Une coupe au même cadrage ou un passage rejoué peut ne pas être détecté ; un flash, un geste rapide ou un texte qui apparaît peut créer une fausse coupe. Contrôle les images avant et après |
@@ -98,29 +123,35 @@ Utilise seulement les outils **déjà présents** sur le poste. S'il en manque u
 - Sans cette demande, n'extrais et ne transcris pas la parole : écris « paroles non transcrites (non demandé) ». Si les paroles comptent pour le brief, dis-le et indique que tu peux les transcrire si l'utilisateur le demande ; continue le reste de l'analyse.
 - Avec cette demande, utilise seulement la transcription locale existante (`scripts/transcrire.py`, hors ligne), si elle fonctionne. Langue tirée du message ou du brief ; sinon demande-la, ou utilise `auto` en le disant. C'est un **brouillon** : passage incompris noté **[incompris]**, jamais reconstruit.
 
-## Recommandations liées au brief
+## Recommandations : seulement sur demande
+
+Le compte rendu par défaut n'en contient pas. Si l'utilisateur en demande, place-les après les observations, avant les limites.
 
 - Cinq au maximum, classées par importance.
 - Chacune dit : **quoi faire**, sur **quoi elle s'appuie** (consigne de l'utilisateur, règle de la marque et son statut, mesure, observation ou interprétation) et ce qui reste **à valider**.
 - Vise la mécanique utile au brief, pas une copie chiffrée. Si l'utilisateur demande de suivre la référence de près, suis sa demande ; les durées, polices ou transitions relevées ne deviennent jamais des réglages par défaut.
 - Reste compatible avec un projet CapCut modifiable. Signale ce que notre flux ou les outils actuels ne savent pas faire.
 - Si les rushes n'ont pas été examinés, dis que la faisabilité n'est pas vérifiée.
-- Si une correction du client apparaît, **propose** de l'ajouter dans `retours-client.md` ; ne l'ajoute pas.
 
 ## Format du compte rendu
 
 Court : environ un écran. Une chronologie détaillée seulement sur demande.
 
-1. **En bref** : ce que fait la référence et ce qui compte pour ce brief (2 ou 3 phrases).
-2. **Source et méthode** : fichier, marque, durée, outils utilisés, ce qui a été examiné.
-3. **Analyse** : tableau `Axe | Mesuré | Observé | Interprété`, six lignes. Une case sans information porte « non mesuré », « non observé » ou « non examinable », avec la raison.
-4. **Recommandations pour ce brief**.
-5. **Conflits et questions** : seulement l'indispensable, groupé.
-6. **Limites et à vérifier** : notamment l'écoute et la synchronisation si elles n'ont pas été faites par un humain.
+1. **Observations** : **cinq au maximum**, courtes, les plus utiles au brief d'abord. Pas de quota : moins de cinq convient. Chacune porte sur un seul point et donne :
+   - ses **moments** (temps ou numéro d'image), avec leur précision réelle ;
+   - ce qui est vérifié dans la vidéo, étiqueté **Mesuré** ou **Observé**, et s'il y a lieu **Interprété**. N'écris que les niveaux utiles ;
+   - s'il y a lieu, à part, **Lu dans les fiches (non vérifié dans la vidéo)**. Une information seulement lue ne constitue pas une observation.
+2. **Limites et à vérifier**, en bref : ce qui a été examiné (fichier, marque, durée, outils, nombre d'images regardées), tout approfondissement et sa raison, ce qui reste invérifiable (notamment l'écoute et la synchronisation si elles n'ont pas été faites par un humain), puis, seulement s'il y en a, les conflits et les questions indispensables, groupés.
+
+Après les limites, résume les **fichiers créés par dossier et par type**, avec leur nombre (ex. « dans tel dossier : 1 planche, 1 fichier de mesures »). Donne le chemin complet de chaque dossier une seule fois ; **ne liste pas le chemin de chaque fichier**. Si aucun fichier n'a été créé, dis-le.
 
 ## Contrôle avant de répondre
 
-- [ ] Chaque chiffre a un outil ou une preuve, sinon « non mesuré ».
+- [ ] Le premier passage s'est limité aux métadonnées et à une sélection d'images ; tout approfondissement répond à une demande explicite ou à une incertitude importante pour le brief.
+- [ ] Toutes les images n'ont été extraites que pour une vérification précise, expliquée.
+- [ ] Cinq observations au maximum, avec leurs moments, puis les limites ; fichiers créés résumés par dossier et par type.
+- [ ] Les informations lues dans les fiches sont séparées de ce qui est vérifié dans la vidéo.
+- [ ] Chaque chiffre a un outil (mesure) ou une source citée (information lue), sinon « non mesuré ».
 - [ ] Les interprétations sont écrites comme telles.
 - [ ] Rien sur le son n'est présenté comme écouté.
 - [ ] Aucune transcription lancée sans demande explicite dans le message de l'utilisateur.
