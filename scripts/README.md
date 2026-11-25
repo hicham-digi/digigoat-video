@@ -214,4 +214,44 @@ Durée : environ 2 minutes et demie. Les deux nouveaux plans (`DGM_3828`, `DGM_3
 | Non-régression après ajout de `-OrientationParRush` et de l'analyse à départ imposé | La commande de la V4 relancée avec `-DepartMusique 6.7` redonne la V4 : vidéo identique (SSIM 1,000000, avec et sans texte) et audio identique (même empreinte MD5) |
 | Arrêt sur l'orientation avec 14 rushes | Une image de test par rush (14 sur 14), code 3. Un défaut a été corrigé : le nom du rush était vide dans le message |
 
-**Non testés** : une orientation différente entre deux rushes dans la même exécution (seules des décisions identiques ont été exercées), rushes déjà verticaux, rushes avec rotation intégrée au fichier, `-Transcription`, `-DepartMusique` imposé, rushes sans piste audio avec `-SonOrigine garder`, d'autres marques.
+## Montage long (client Dimitri) : outils ajoutés le 2026-11-24
+
+Autorisés par l'utilisateur : Whisper local en environnement isolé, et adaptation du générateur CapCut. Procédure : `sops/procedure-montage-long.md`. Aucune donnée n'est envoyée à un service externe (`HF_HUB_OFFLINE=1`, pas de télémétrie).
+
+**Environnement isolé (hors dépôt)** : `C:\Users\Hicham\Desktop\Digigoat\OUTILS\transcription\` : `venv\` (Python 3.13, faster-whisper 1.2.1, CTranslate2 4.9.1, bibliothèques CUDA 12 en paquets pip), `modeles\faster-whisper-large-v3\` (2,9 Go). Les trois scripts suivants se lancent avec `venv\Scripts\python.exe` (numpy y est installé).
+
+| Script | Rôle | Interpréteur |
+| --- | --- | --- |
+| `transcrire.py` | Transcription locale horodatée au mot, **brouillon** : `.json`, `.srt` (sous-titres courts), `.txt` (timecodes), `_a-relire.md` (passages incertains). Langue **obligatoire** (`--langue fr\|en\|auto`). Marqueurs `[à vérifier]` et `[incompris]` (seuils provisoires) | venv |
+| `proposer_coupes.py` | Propose des coupes sobres (silences, répétitions, faux départs) avec justification, risque sur le sens et statut (appliquée / à valider / refusée) ; écrit `coupes.csv`, `coupes.md`, le plan CSV, des sous-titres recalés sur les segments gardés | Python standard (`python -I`) |
+| `caler_audio.py` | Estime le décalage entre l'audio de la caméra et un audio enregistré à part (corrélation croisée) et donne la valeur `@D` pour le générateur | venv |
+
+**Nouvelles options de `capcut_projet.py`** (sans elles, le projet produit est identique à avant : vérifié) :
+
+| Option | Effet |
+| --- | --- |
+| `--son-origine garder` | Conserve le son d'origine des prises (volume 1) ; par défaut il est coupé |
+| `--audios-separes "RUSH=audio.wav@D"` | Piste audio séparée liée au rush, mêmes points d'entrée et de sortie, décalage `D` en secondes (`temps audio = temps rush + D`, valeur donnée par `caler_audio.py`). Le son de la caméra de ce rush est alors coupé |
+| `--sous-titres "RUSH=fichier.srt"` | Un texte modifiable par sous-titre, placé sur la ligne de montage à partir des temps du **rush source**, coupé aux points de coupe, sur une ou plusieurs pistes (aucun chevauchement) |
+| `--sous-titres-police`, `-police-nom`, `-taille`, `-y` | Style des sous-titres. Défauts **techniques neutres** (Arial, taille 5, bas de l'image), **pas une préférence** de client ; calibration de la taille non vérifiée hors 1080x1920 |
+| `--canevas 1920x1080` | Taille du projet (le modèle est en 1080x1920) |
+| Colonnes `zoom;cx;cy` du plan CSV (facultatives) | Recadrage d'un plan : agrandissement `zoom` (>= 1) centré sur le point `cx;cy` de l'image source (0 à 1, virgule ou point). Arrêt si le cadre sort de l'image ou si le plan est tourné. Sans ces colonnes : comportement inchangé (vérifié) |
+| `--textes-libres "TEXTE\|début\|fin\|x\|y;..."` ou `--textes-libres-fichier fichier.txt` | Textes positionnés librement (une piste par texte) : secondes sur la ligne de montage (`fin` peut valoir `fin`), `x`/`y` normalisés (centre = 0, haut = +1). Le fichier évite les guillemets dans la ligne de commande (PowerShell 5.1 les coupe) ; une ligne par texte, `#` = commentaire. Utilisé pour l'essai « dispute-addition » |
+
+**Essai synthétique du 2026-11-24** (rush de 50,6 s : voix de synthèse anglaise avec pauses, faux départ, répétitions, réserves ; audio séparé décalé de 0,3 s) :
+
+| Test | Résultat |
+| --- | --- |
+| Installation | faster-whisper et bibliothèques CUDA installés ; modèle large-v3 téléchargé ; **incompatibilité constatée** entre faster-whisper 1.2.1 et PyAV 19 (lecture audio intégrée) : contournée en lisant le WAV 16 kHz dans `transcrire.py` |
+| Transcription GPU (RTX 3060 Ti, float16) | 50,6 s en 3,3 s (x15 temps réel) ; chargement du modèle 6 s |
+| Transcription CPU (int8) | 46 s pour 50,6 s (x1,1 temps réel) |
+| Langue `auto` | anglais détecté, probabilité 1,00 |
+| Texte | Transcription fidèle sur voix de synthèse (réserves « unless », « only if » conservées). Une fausse détection (« image. ») a été marquée `[à vérifier]` |
+| Calage audio | -0,300 s retrouvé, confiance 32 |
+| Propositions de coupes | 11 propositions : 5 appliquées (4 silences, 1 répétition de 4 mots), 6 à valider ; 50,6 s -> 36,6 s |
+| Projet CapCut (local, `--essai-local`) | 6 plans liés au rush, 6 segments d'audio séparé alignés (décalage vérifié, y compris négatif), 11 sous-titres modifiables recalés sur la ligne de montage, canevas 16:9, son d'origine conservé |
+| Non-régression du générateur | Mêmes arguments qu'avant : `draft_content.json` identique à celui de l'ancienne version (identifiants normalisés) |
+
+**Non testés** : ouverture du projet dans CapCut (nouvelles pistes), voix humaine réelle, français, plusieurs voix, bruit de salle, durée longue, calibration de la taille des sous-titres en 16:9, dérive d'horloge d'un audio séparé.
+
+**Non testés** (script de prémontage) : une orientation différente entre deux rushes dans la même exécution (seules des décisions identiques ont été exercées), rushes déjà verticaux, rushes avec rotation intégrée au fichier, `-Transcription`, `-DepartMusique` imposé, rushes sans piste audio avec `-SonOrigine garder`, d'autres marques.

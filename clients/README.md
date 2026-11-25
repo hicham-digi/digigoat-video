@@ -10,6 +10,7 @@ Un dossier par marque. Chaque dossier contient les mêmes quatre fichiers, plus 
 | Hormeta Canada | `hormeta/` | `offres-et-services.md`, `organisation.md` | Première version le 2026-11-24 (chartes graphiques lues) ; restent : public, langues par contenu, validation, références, offres actuelles |
 | Pacini Granby | `pacini-granby/` | — (offres et coordonnées dans `marque.md`) | Partiellement remplie ; essais de montage dans `essais/` |
 | Pacini Marché Central | `pacini-marche-central/` | `offres-et-services.md`, `organisation.md` | Première version le 2026-11-24 (portée des documents communs Pacini vérifiée) ; restent : contact, validation, public, langue, offres confirmées, références |
+| Dimitri | `dimitri/` | `organisation.md`, `montage-long.md` | Dossier créé le 2026-11-24 (client avocat, contenus longs) : presque tout est « À compléter » ; aucun rush ni document de contenu dans le Drive ; outils de montage long préparés et testés sur un rush synthétique (essai en attente du rush : `dimitri/essais/essai-long_01/`) ; restent : cabinet, rôle, langue, types de contenus, durées, ton, identité, références, niveau de montage, validations |
 | Auto Spa Sainte-Julie | `auto-spa-ste-julie/` | `offres-et-services.md`, `organisation.md` | Première version le 2026-11-24 (spécification du site, scripts, recherche de marché lus ; couleurs, police et règles de logo vérifiées sur le guide de logo via l'aperçu Drive) ; restent : contact, validation, tarifs confirmés, langue et ton des vidéos, références |
 
 ## Les fichiers d'une marque

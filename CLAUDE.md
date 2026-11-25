@@ -9,7 +9,7 @@ Ce fichier est lu par Claude Code au début de chaque session. Il décrit commen
 - Dépôt de travail pour le montage vidéo de plusieurs marques clientes.
 - Poste de travail : Windows. Logiciel de montage : CapCut Pro.
 - L'utilisateur débute avec Claude Code : explique simplement, étape par étape, en français.
-- Marques gérées : Importations Alain, Hormeta, Pacini Granby, Pacini Marché Central, Auto Spa Sainte-Julie.
+- Marques gérées : Importations Alain, Hormeta, Pacini Granby, Pacini Marché Central, Auto Spa Sainte-Julie. Client : Dimitri (avocat, contenus longs : `clients/dimitri/`, voir `montage-long.md`).
 
 ## Documents à lire avant de travailler sur une vidéo
 
@@ -44,7 +44,7 @@ L'utilisateur fournit seulement **le dossier des rushes, le sujet, la référenc
 6. **Gros fichiers hors dépôt.** Rushes, exports, musiques et projets CapCut restent dans les dossiers de production de l'utilisateur. Dans le dépôt, on garde seulement leurs emplacements et les instructions pour les utiliser (voir `sops/emplacements-fichiers.md`). Ne commite jamais de vidéos, d'exports, de clés d'accès ni de mots de passe.
 7. **Un lien Drive seul ne suffit pas.** Pour traiter un fichier, il doit être accessible localement. Si ce n'est pas le cas, demande à l'utilisateur de le placer à l'emplacement prévu.
 8. **Nouvelle correction du client ?** Propose de l'ajouter dans `retours-client.md` de la marque, avec la date et la règle à appliquer aux prochains montages.
-9. **N'installe aucun outil et ne crée aucun script ou agent actif sans l'accord explicite de l'utilisateur.**
+9. **N'installe aucun outil et ne crée aucun script ou agent actif sans l'accord explicite de l'utilisateur.** Exception accordée le 2026-11-24 pour le montage long de Dimitri : une transcription locale de type Whisper en environnement isolé (`C:\Users\Hicham\Desktop\Digigoat\OUTILS\transcription\`, hors dépôt) et l'adaptation du générateur CapCut ; aucun transfert vers un service externe ni aucune dépense sans accord (`sops/procedure-montage-long.md`).
 10. **Modification ciblée = on conserve le reste.** Quand l'utilisateur demande un changement précis, garde les autres éléments validés (police, taille et position du texte, passages, musique…). Un réglage introuvable se cherche d'abord dans le projet CapCut source, en lecture seule ; toute approximation est signalée avant d'être appliquée (voir `sops/workflow-nouvelle-video.md`).
 11. **Un champ resté entre crochets ne confirme jamais une information** (règle de l'utilisateur, 2026-11-24). Libellé de modèle (« [NOM] », « [CANAUX UTILISÉS] »), menu d'options (« [OUI / NON] », « [COURRIEL, WHATSAPP] ») ou valeur qui reprend le libellé : ne rien déduire, ne rien enregistrer comme réponse. Écrire « À compléter » (champ vide) ou « À confirmer » (valeur seulement vue dans un champ resté entre crochets). Une valeur n'est confirmée que si elle est écrite explicitement par l'utilisateur, avec sa source.
 12. **Production : ne demander que le nécessaire.** Lors d'une vidéo, ne demander que les informations manquantes **utiles à cette vidéo**, en un seul message groupé. Ne jamais bloquer un montage sur des coordonnées, tarifs, contacts ou autres champs « À compléter » qui ne seront pas utilisés dans la vidéo. Les fiches de marque restent partiellement renseignées et servent de base (décision du 2026-11-24 : l'enrichissement documentaire est arrêté pour le moment).
@@ -66,7 +66,7 @@ Les choix d'un essai (durée, sélection et ordre des plans, passage musical, fo
 | `CLAUDE.md` | Ces instructions générales |
 | `README.md` | Mode d'emploi pour l'utilisateur et Guan |
 | `sops/` | Procédures de montage et de contrôle qualité |
-| `clients/` | Directives propres à chaque marque (5 dossiers) |
+| `clients/` | Directives propres à chaque marque ou client (6 dossiers) |
 | `templates/brief-video.md` | Formulaire à remplir pour chaque nouvelle vidéo |
 | `scripts/` | Script de prémontage `premontage.ps1` et son mode d'emploi |
 | `.claude/agents/` | Futures instructions d'agents spécialisés |

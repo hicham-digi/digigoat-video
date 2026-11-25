@@ -32,6 +32,7 @@ Système de travail pour le montage vidéo des marques clientes : directives par
 | Pacini Granby | `clients/pacini-granby/` |
 | Pacini Marché Central | `clients/pacini-marche-central/` |
 | Auto Spa Sainte-Julie | `clients/auto-spa-ste-julie/` |
+| Dimitri (client avocat, montage long) | `clients/dimitri/` |
 
 Les directives de chaque marque restent séparées. Pour les deux Pacini, les offres, coordonnées et appels à l'action sont propres à chaque restaurant.
 

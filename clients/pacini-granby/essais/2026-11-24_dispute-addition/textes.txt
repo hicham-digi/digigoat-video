@@ -1,0 +1,3 @@
+﻿# TEXTE|début_s|fin_s ou fin|x|y  (positions CapCut : x = 2*fraction de la largeur - 1, y = 1 - 2*fraction de la hauteur)
+"Je paie"|0.8|fin|-0.56|-0.126
+"Non, je paie"|1.7|fin|0.38|-0.06

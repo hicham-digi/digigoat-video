@@ -12,6 +12,19 @@ Deux façons de relier les plans :
                          Le sens de chaque rush paysage sans rotation intégrée est décidé FICHIER PAR FICHIER
                          (--tests-orientation pour les images de test, --orientation-par-rush pour décider) : jamais deviné.
 
+Montage long (options facultatives, comportement par défaut inchangé) :
+  --son-origine garder        conserve le son d'origine des prises (par défaut il est coupé)
+  --audios-separes "R=a.wav"  audio enregistré à part, rattaché au rush R (décalage facultatif "R=a.wav@0.35") : piste audio
+                              séparée, alignée sur les mêmes points d'entrée/sortie ; le son de la caméra de R est alors coupé
+  --sous-titres "R=r.srt"     sous-titres (temps du RUSH source) projetés sur la ligne de montage, un texte modifiable par
+                              segment, coupés aux points de coupe
+  --canevas 1920x1080         taille du projet (par défaut : celle du modèle, 1080x1920)
+
+Recadrage et textes positionnés (options facultatives, ajoutées le 2026-11-24, comportement par défaut inchangé) :
+  colonnes facultatives du plan : zoom;cx;cy   agrandit le plan de « zoom » autour du point (cx, cy) de l'image source
+                                               (fractions de la largeur/hauteur) ; le recadrage ne peut pas sortir de l'image
+  --textes-libres "TEXTE|début|fin|x|y;..."    textes modifiables placés sur la ligne de montage (une piste chacun)
+
 Structure : MODÈLE TECHNIQUE AUTONOME (templates/capcut/modele_technique_v1/modele.json), sans média ni texte d'un
 ancien montage. On n'écrit que dans un NOUVEAU dossier de projet. Le seul fichier existant modifié est l'index
 `root_meta_info.json`, sauvegardé avant (root_meta_info.json.bak_before_<nom>).
@@ -94,6 +107,42 @@ def plateforme_locale(projets):
     return None, None
 
 
+def lire_srt(chemin):
+    """SRT -> liste (début_µs, fin_µs, texte). Format simple : numéro, 'hh:mm:ss,mmm --> hh:mm:ss,mmm', texte."""
+    brut = Path(chemin).read_text(encoding='utf-8-sig').replace('\r\n', '\n').replace('\r', '\n')
+    cues = []
+    for bloc in re.split(r'\n\s*\n', brut.strip()):
+        lignes = [l for l in bloc.split('\n') if l.strip() != '']
+        if not lignes:
+            continue
+        idx = next((k for k, l in enumerate(lignes) if '-->' in l), None)
+        if idx is None:
+            raise SystemExit('SRT illisible (ligne de temps absente) dans %s : %s' % (chemin, lignes[0][:60]))
+        m = re.match(r'^\s*(\d+):(\d+):(\d+)[,.](\d+)\s*-->\s*(\d+):(\d+):(\d+)[,.](\d+)', lignes[idx])
+        if not m:
+            raise SystemExit('SRT illisible (temps) dans %s : %s' % (chemin, lignes[idx][:60]))
+        g = [int(x) for x in m.groups()]
+        deb = ((g[0] * 60 + g[1]) * 60 + g[2]) * 1000000 + int(('%-6s' % m.group(4)).replace(' ', '0')[:6])
+        fin = ((g[4] * 60 + g[5]) * 60 + g[6]) * 1000000 + int(('%-6s' % m.group(8)).replace(' ', '0')[:6])
+        texte = ' '.join(l.strip() for l in lignes[idx + 1:])
+        if fin > deb and texte:
+            cues.append((deb, fin, texte))
+    return cues
+
+
+def lire_carte(valeur, option):
+    """'NOM=valeur;NOM2=valeur2' -> {nom_en_minuscules_sans_extension: valeur}."""
+    carte = {}
+    for paire in valeur.split(';'):
+        if not paire.strip():
+            continue
+        m = re.match(r'^\s*([^=]+?)\s*=\s*(.+?)\s*$', paire)
+        if not m:
+            raise SystemExit('%s : entrée illisible « %s » (attendu NOM=chemin)' % (option, paire))
+        carte[Path(m.group(1)).stem.lower()] = m.group(2)
+    return carte
+
+
 def lire_plan(chemin, limite):
     lignes = []
     with open(chemin, 'r', encoding='utf-8-sig', newline='') as f:
@@ -142,6 +191,16 @@ def main():
     ap.add_argument('--texte-y', type=float, default=0.0, help='position verticale CapCut : 0 = milieu, + = vers le haut')
     ap.add_argument('--compteur', default='', help='un chiffre par plan, sur une piste de texte séparée : "1;2;3;..." (même police et même taille que --texte)')
     ap.add_argument('--compteur-y', type=float, default=-0.17, help='position verticale CapCut du compteur (0 = milieu, + = vers le haut ; -0,17 = 58,5 %% de la hauteur)')
+    ap.add_argument('--son-origine', default='couper', choices=['couper', 'garder'], help="son d'origine des prises (défaut : coupé)")
+    ap.add_argument('--audios-separes', default='', help='audio enregistré à part par rush : "RUSH=chemin.wav;RUSH2=chemin2.wav@0.35" (@ = décalage en s : temps audio = temps vidéo + décalage)')
+    ap.add_argument('--sous-titres', default='', help='SRT en temps du rush source : "RUSH=fichier.srt;..." (ou un seul chemin s\'il n\'y a qu\'un rush)')
+    ap.add_argument('--sous-titres-police', default='C:/Windows/Fonts/arial.ttf', help='police des sous-titres (défaut technique neutre, pas une préférence de marque)')
+    ap.add_argument('--sous-titres-police-nom', default='Arial')
+    ap.add_argument('--sous-titres-taille', type=float, default=5.0, help='taille CapCut des sous-titres (calibration non vérifiée hors 1080x1920)')
+    ap.add_argument('--sous-titres-y', type=float, default=-0.78, help='position verticale CapCut des sous-titres (0 = milieu, - = vers le bas)')
+    ap.add_argument('--textes-libres', default='', help='textes positionnés sur la ligne de montage : "TEXTE|début_s|fin_s ou fin|x|y;..." (x,y CapCut : x = 2×fraction de la largeur − 1 ; y = 1 − 2×fraction de la hauteur) ; style = --police, --police-nom, --taille-capcut')
+    ap.add_argument('--textes-libres-fichier', default='', help='comme --textes-libres mais lu dans un fichier UTF-8, une ligne TEXTE|début|fin|x|y par texte (évite les soucis de guillemets en ligne de commande)')
+    ap.add_argument('--canevas', default='', help='taille du projet LxH (ex. 1920x1080) ; défaut : celle du modèle')
     ap.add_argument('--limiter', type=int, default=0, help='ne garder que les N premiers plans (projet de test)')
     ap.add_argument('--projets', default=str(PROJETS_DEFAUT), help='dossier des projets CapCut')
     ap.add_argument('--essai-local', default='', help='écrire le projet dans ce dossier au lieu de CapCut (aucun index modifié)')
@@ -167,7 +226,27 @@ def main():
         raise SystemExit('Version de modèle non gérée : %s' % M.get('version_modele'))
     tpl = M['draft_content']
     P = M['prototypes']
+    if a.canevas:
+        mc = re.match(r'^(\d+)\s*[xX]\s*(\d+)$', a.canevas.strip())
+        if not mc:
+            raise SystemExit('--canevas : format attendu LxH (ex. 1920x1080), reçu « %s »' % a.canevas)
+        cl, ch = int(mc.group(1)), int(mc.group(2))
+        from math import gcd
+        gg = gcd(cl, ch)
+        tpl['canvas_config']['width'], tpl['canvas_config']['height'] = cl, ch
+        tpl['canvas_config']['ratio'] = '%d:%d' % (cl // gg, ch // gg)
     canvas_l, canvas_h = tpl['canvas_config']['width'], tpl['canvas_config']['height']
+    carte_audio = {}
+    for k, v in lire_carte(a.audios_separes, '--audios-separes').items():
+        chemin_a, _, dec = v.partition('@')
+        chemin_a = Path(chemin_a.strip())
+        if not chemin_a.exists():
+            raise SystemExit('--audios-separes : fichier introuvable : %s' % chemin_a)
+        try:
+            dec_us = int(round(float(dec.replace(',', '.')) * 1e6)) if dec.strip() else 0
+        except ValueError:
+            raise SystemExit('--audios-separes : décalage illisible « %s »' % dec)
+        carte_audio[k] = (chemin_a, dec_us, sonde(chemin_a))
 
     # ------------------------------------------------------------ plan et médias
     lignes = lire_plan(a.plan, a.limiter)
@@ -188,7 +267,11 @@ def main():
             dur = int(round(float(str(r['duree']).replace(',', '.')) * 1e6))
             if deb + dur > info['us'] + 50000:
                 raise SystemExit('Plan hors du rush %s : début %.2f + durée %.2f > %.2f s' % (fichier.name, deb / 1e6, dur / 1e6, info['us'] / 1e6))
-        segs.append({'fichier': fichier, 'info': info, 'deb': deb, 'dur': dur, 'nom': r.get('nom', '')})
+        def reel(cle, defaut):
+            v = str(r.get(cle, '') or '').strip().replace(',', '.')
+            return float(v) if v else defaut
+        segs.append({'fichier': fichier, 'info': info, 'deb': deb, 'dur': dur, 'nom': r.get('nom', ''),
+                     'zoom': reel('zoom', 1.0), 'cx': reel('cx', 0.5), 'cy': reel('cy', 0.5)})
 
     # ------------------------------------------------------------ orientation : décidée fichier par fichier, jamais devinée
     carte = {}
@@ -269,7 +352,15 @@ def main():
         g['source_timerange'] = {'start': s['deb'], 'duration': s['dur']}
         g['target_timerange'] = {'start': debut, 'duration': s['dur']}
         g['speed'] = 1.0
-        g['volume'] = 0.0                      # sons d'origine coupés (la V5 n'a que la musique)
+        s['t0'] = debut
+        # son d'origine : coupé par défaut (la V5 n'a que la musique) ; conservé avec --son-origine garder ;
+        # toujours coupé pour un rush qui a un audio séparé (la piste séparée porte le son)
+        if s['fichier'].stem.lower() in carte_audio:
+            g['volume'] = 0.0
+        elif a.son_origine == 'garder' and i['audio']:
+            g['volume'] = 1.0
+        else:
+            g['volume'] = 0.0
         g['last_nonzero_volume'] = 1.0
         rotation, echelle = 0.0, 1.0
         if a.rushes and s.get('besoin'):
@@ -279,9 +370,23 @@ def main():
                 rotation = 90.0
             if rotation:
                 echelle = echelle_remplissage(i['w'], i['h'], 90, canvas_l, canvas_h)
+        tx_clip, ty_clip = 0.0, 0.0
+        if abs(s['zoom'] - 1.0) > 1e-9 or abs(s['cx'] - 0.5) > 1e-9 or abs(s['cy'] - 0.5) > 1e-9:
+            # recadrage (colonnes facultatives zoom, cx, cy du plan) : agrandit de « zoom » autour du point (cx, cy) de l'image
+            # source (fractions de la largeur et de la hauteur) et le ramène au centre du canevas
+            if rotation:
+                raise SystemExit('Plan « %s » : recadrage (zoom/cx/cy) non géré avec une rotation de rush.' % s['nom'])
+            if s['zoom'] < 1.0:
+                raise SystemExit('Plan « %s » : zoom inférieur à 1 non géré.' % s['nom'])
+            echelle = s['zoom']
+            tx_clip = -(s['cx'] - 0.5) * 2.0 * echelle
+            ty_clip = (s['cy'] - 0.5) * 2.0 * echelle
+            demi = 0.5 / echelle
+            if s['cx'] - demi < -1e-9 or s['cx'] + demi > 1 + 1e-9 or s['cy'] - demi < -1e-9 or s['cy'] + demi > 1 + 1e-9:
+                raise SystemExit('Plan « %s » : le recadrage sort de l\'image source (cx=%.3f, cy=%.3f, zoom=%.2f).' % (s['nom'], s['cx'], s['cy'], s['zoom']))
         g['clip']['scale'] = {'x': echelle, 'y': echelle}
         g['clip']['rotation'] = rotation
-        g['clip']['transform'] = {'x': 0.0, 'y': 0.0}
+        g['clip']['transform'] = {'x': tx_clip, 'y': ty_clip}
         g['uniform_scale'] = {'on': True, 'value': echelle}
         g['extra_material_refs'] = ajouter_extras(P['video']['annexes'])
         g['render_index'] = 0
@@ -293,6 +398,53 @@ def main():
     piste_v = copy.deepcopy(P['video']['piste'])
     piste_v.update({'id': guid(), 'segments': segments_video, 'flag': 0})
     pistes.append(piste_v)
+
+    # ------------------------------------------------------------ piste audio séparée (enregistrement externe), liée aux rushes
+    audios_info = []
+    if carte_audio:
+        inconnus_a = [k for k in carte_audio if k not in {s['fichier'].stem.lower() for s in segs}]
+        if inconnus_a:
+            print('Attention : --audios-separes cite des rushes absents du plan : %s' % ', '.join(inconnus_a))
+        mat_par_audio = {}
+        segs_as = []
+        for s in segs:
+            cle = s['fichier'].stem.lower()
+            if cle not in carte_audio:
+                continue
+            chemin_a, dec_us, ia = carte_audio[cle]
+            if cle not in mat_par_audio:
+                local_id = str(uuid.uuid4())
+                m = copy.deepcopy(P['audio']['materiau'])
+                m.update({'id': guid(), 'unique_id': uuid.uuid4().hex, 'type': 'extract_music', 'name': chemin_a.name, 'duration': ia['us'],
+                          'path': fwd(chemin_a), 'category_name': 'local', 'music_id': str(uuid.uuid4()), 'local_material_id': local_id})
+                mats['audios'].append(m)
+                ids_locaux.append(local_id)
+                entrees_meta.append({'ai_group_type': '', 'create_time': maintenant_s, 'duration': ia['us'], 'enter_from': 0,
+                                     'extra_info': chemin_a.name, 'file_Path': fwd(chemin_a), 'height': 0, 'id': local_id,
+                                     'import_time': maintenant_s, 'import_time_ms': maintenant_us, 'item_source': 1,
+                                     'material_color_tag': '', 'md5': '', 'metetype': 'music',
+                                     'roughcut_time_range': {'duration': ia['us'], 'start': 0},
+                                     'sub_time_range': {'duration': -1, 'start': -1}, 'type': 0, 'width': 0})
+                mat_par_audio[cle] = m
+                audios_info.append('%s (rush %s, décalage %.3f s)' % (chemin_a.name, s['fichier'].name, dec_us / 1e6))
+            debut_a = s['deb'] + dec_us
+            if debut_a < 0 or debut_a + s['dur'] > ia['us'] + 50000:
+                raise SystemExit("Audio séparé %s hors limites pour le plan « %s » : début %.3f s + durée %.3f s (audio : %.3f s, décalage %.3f s)" % (
+                    chemin_a.name, s['nom'], debut_a / 1e6, s['dur'] / 1e6, ia['us'] / 1e6, dec_us / 1e6))
+            g = copy.deepcopy(P['audio']['segment'])
+            g['id'] = guid()
+            g['material_id'] = mat_par_audio[cle]['id']
+            g['source_timerange'] = {'start': debut_a, 'duration': s['dur']}
+            g['target_timerange'] = {'start': s['t0'], 'duration': s['dur']}
+            g['volume'] = 1.0
+            g['last_nonzero_volume'] = 1.0
+            g['extra_material_refs'] = ajouter_extras(P['audio']['annexes'])
+            g['track_render_index'] = 1
+            segs_as.append(g)
+        if segs_as:
+            piste_as = copy.deepcopy(P['audio']['piste'])
+            piste_as.update({'id': guid(), 'segments': segs_as, 'flag': 0})
+            pistes.append(piste_as)
 
     # ------------------------------------------------------------ piste audio (musique)
     musique_info = None
@@ -331,24 +483,26 @@ def main():
         g['volume'] = a.volume_musique
         g['last_nonzero_volume'] = 1.0
         g['extra_material_refs'] = ajouter_extras(P['audio']['annexes'], modif_audio)
-        g['track_render_index'] = 1
+        g['track_render_index'] = 2 if carte_audio else 1
         piste_a = copy.deepcopy(P['audio']['piste'])
         piste_a.update({'id': guid(), 'segments': [g], 'flag': 0})
         pistes.append(piste_a)
         musique_info = {'nom': mus.name}
 
     # ------------------------------------------------------------ piste texte (modifiable)
-    def faire_texte(contenu_texte, debut_us, duree_us, y, idx_piste):
+    def faire_texte(contenu_texte, debut_us, duree_us, y, idx_piste, police_chemin=None, police_nom=None, taille=None, x=0.0):
         texte = '\n'.join(x.strip() for x in contenu_texte.split('|'))
         m = copy.deepcopy(P['texte']['materiau'])
-        police = fwd(a.police)
+        police = fwd(police_chemin or a.police)
+        nom_police = police_nom or a.police_nom
+        taille = taille or a.taille_capcut
         contenu = {'text': texte, 'styles': [{
             'fill': {'content': {'render_type': 'solid', 'solid': {'color': [1, 1, 1]}}},
-            'font': {'path': police, 'id': ''}, 'size': a.taille_capcut, 'useLetterColor': True, 'range': [0, len(texte)]}]}
+            'font': {'path': police, 'id': ''}, 'size': taille, 'useLetterColor': True, 'range': [0, len(texte)]}]}
         m.update({
             'id': guid(), 'type': 'text', 'content': json.dumps(contenu, separators=(',', ':'), ensure_ascii=False),
-            'font_name': a.police_nom, 'font_title': 'none', 'font_path': police, 'font_id': '', 'font_resource_id': '',
-            'font_url': '', 'font_source_platform': 1, 'fonts': [], 'font_size': a.taille_capcut, 'text_color': '#ffffff',
+            'font_name': nom_police, 'font_title': 'none', 'font_path': police, 'font_id': '', 'font_resource_id': '',
+            'font_url': '', 'font_source_platform': 1, 'fonts': [], 'font_size': taille, 'text_color': '#ffffff',
             'text_alpha': 1.0, 'alignment': 1, 'line_spacing': 0.0, 'letter_spacing': 0.0, 'bold_width': 0.0, 'italic_degree': 0,
             'has_shadow': True, 'shadow_color': '#000000', 'shadow_alpha': 0.7, 'shadow_smoothing': 0.45,
             'shadow_distance': 2.0, 'shadow_angle': -90.0, 'shadow_point': {'x': 0.0, 'y': -0.9},
@@ -361,7 +515,7 @@ def main():
         g['target_timerange'] = {'start': debut_us, 'duration': duree_us}
         g['clip']['scale'] = {'x': 1.0, 'y': 1.0}
         g['clip']['rotation'] = 0.0
-        g['clip']['transform'] = {'x': 0.0, 'y': y}
+        g['clip']['transform'] = {'x': x, 'y': y}
         g['uniform_scale'] = {'on': True, 'value': 1.0}
         g['extra_material_refs'] = ajouter_extras(P['texte']['annexes'])
         g['track_render_index'] = idx_piste
@@ -385,6 +539,79 @@ def main():
         piste_c = copy.deepcopy(P['texte']['piste'])
         piste_c.update({'id': guid(), 'segments': segs_c, 'flag': 0})
         pistes.append(piste_c)
+
+    # ------------------------------------------------------------ textes libres : temps de la LIGNE DE MONTAGE, position x/y, une piste chacun
+    blocs_libres = [b for b in a.textes_libres.split(';') if b.strip()]
+    if a.textes_libres_fichier:
+        blocs_libres += [l for l in Path(a.textes_libres_fichier).read_text(encoding='utf-8-sig').splitlines() if l.strip() and not l.lstrip().startswith('#')]
+    if blocs_libres:
+        for k, bloc in enumerate(blocs_libres):
+            parts = [x.strip() for x in bloc.split('|')]
+            if len(parts) != 5:
+                raise SystemExit('--textes-libres : « %s » : attendu TEXTE|début_s|fin_s|x|y' % bloc)
+            try:
+                d0 = int(round(float(parts[1].replace(',', '.')) * 1e6))
+                d1 = total if parts[2].lower() == 'fin' else int(round(float(parts[2].replace(',', '.')) * 1e6))
+                tx_t, ty_t = float(parts[3].replace(',', '.')), float(parts[4].replace(',', '.'))
+            except ValueError:
+                raise SystemExit('--textes-libres : nombre illisible dans « %s »' % bloc)
+            if not (0 <= d0 < d1 <= total):
+                raise SystemExit('--textes-libres : « %s » : début/fin hors de la durée du projet (%.3f s)' % (parts[0], total / 1e6))
+            piste_l = copy.deepcopy(P['texte']['piste'])
+            piste_l.update({'id': guid(), 'segments': [faire_texte(parts[0], d0, d1 - d0, ty_t, 5 + k, x=tx_t)], 'flag': 0})
+            pistes.append(piste_l)
+
+    # ------------------------------------------------------------ sous-titres : temps du rush source -> ligne de montage, un texte par segment
+    stats_st = None
+    if a.sous_titres:
+        cartes_st = {}
+        if '=' not in a.sous_titres:
+            rushes_uniques = {s['fichier'].stem.lower() for s in segs}
+            if len(rushes_uniques) != 1:
+                raise SystemExit('--sous-titres : plusieurs rushes dans le plan, indiquez "RUSH=fichier.srt;..."')
+            cartes_st[next(iter(rushes_uniques))] = a.sous_titres
+        else:
+            cartes_st = lire_carte(a.sous_titres, '--sous-titres')
+        cues_par_rush = {}
+        for k, v in cartes_st.items():
+            if not Path(v).exists():
+                raise SystemExit('--sous-titres : fichier introuvable : %s' % v)
+            cues_par_rush[k] = lire_srt(v)
+        pieces = []      # (début_µs, fin_µs, texte, coupé)
+        coupes = 0
+        for s in segs:
+            cues = cues_par_rush.get(s['fichier'].stem.lower())
+            if not cues:
+                continue
+            a0, a1 = s['deb'], s['deb'] + s['dur']
+            for cd, cf, tx in cues:
+                if cf <= a0 or cd >= a1:
+                    continue
+                d0, d1 = max(cd, a0), min(cf, a1)
+                if d1 - d0 < 100000:
+                    continue
+                est_coupe = (cd < a0) or (cf > a1)
+                coupes += 1 if est_coupe else 0
+                pieces.append((s['t0'] + d0 - a0, s['t0'] + d1 - a0, tx, est_coupe))
+        pieces.sort(key=lambda x: x[0])
+        lignes_fin = []     # fin du dernier sous-titre par piste, pour éviter tout chevauchement
+        groupes = []
+        for deb_p, fin_p, tx, cp in pieces:
+            for k, fin_k in enumerate(lignes_fin):
+                if fin_k <= deb_p:
+                    lignes_fin[k] = fin_p
+                    groupes[k].append((deb_p, fin_p, tx))
+                    break
+            else:
+                lignes_fin.append(fin_p)
+                groupes.append([(deb_p, fin_p, tx)])
+        for k, grp in enumerate(groupes):
+            segs_t = [faire_texte(tx, d0, d1 - d0, a.sous_titres_y, 4 + k, a.sous_titres_police, a.sous_titres_police_nom, a.sous_titres_taille)
+                      for d0, d1, tx in grp]
+            piste_s = copy.deepcopy(P['texte']['piste'])
+            piste_s.update({'id': guid(), 'segments': segs_t, 'flag': 0})
+            pistes.append(piste_s)
+        stats_st = {'segments': len(pieces), 'coupes_aux_points_de_coupe': coupes, 'pistes': len(groupes)}
 
     # ------------------------------------------------------------ draft_content
     id_timeline = guid()
@@ -520,6 +747,15 @@ def main():
         len(segs), 'liés aux rushes sources, rallongeables' if a.rushes else 'segments découpés, durée fixe', total / 1e6,
         ('%s (départ %.2f s, fondus %.2f/%.2f s)' % (musique_info['nom'], a.depart, a.fondu_entree, a.fondu_sortie)) if musique_info else 'aucune',
         'oui' if a.texte else 'non'))
+    if a.son_origine == 'garder':
+        print("Son d'origine : conservé (sauf rushes avec audio séparé).")
+    if audios_info:
+        print('Audio séparé : %s' % '; '.join(audios_info))
+    if stats_st:
+        print('Sous-titres : %d segment(s) modifiable(s) sur %d piste(s) ; %d coupé(s) par un point de coupe (à relire).' % (
+            stats_st['segments'], stats_st['pistes'], stats_st['coupes_aux_points_de_coupe']))
+    if a.canevas:
+        print('Canevas : %s' % a.canevas)
 
 
 if __name__ == '__main__':
